@@ -1,0 +1,40 @@
+.video-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 20px;
+  }
+  
+  .category-list {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  
+  .category-list button {
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .video-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+  
+  .video-item {
+    width: 30%;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    cursor: pointer;
+  }
+  

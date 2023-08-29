@@ -14,3 +14,6 @@ export type HistoryRecord = {
     lastPosition: number;
     timestamp: Date;
   }
+export type GenrePageProps = {
+    genre: string;
+  }

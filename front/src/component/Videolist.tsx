@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './CSS/Videolist.css';
 import axios from 'axios';
 import { Movie, MoviesResponse } from '../type/VideoType';
+import { useNavigate } from 'react-router-dom';
 
 const VideoList = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loadedMovies, setLoadedMovies] = useState<number>(5);
@@ -20,6 +22,8 @@ const VideoList = () => {
       .catch((error: Error) => {
         console.error('Error recording history:', error);
       });
+
+      navigate(`/api/stream/${movieID}`);
   }; //주석 처리하면 에러나서 일단 이대로 둠
 
   /* 아직 못쓰는 부분2 (추후 검토도 필요할것으로 보임)
