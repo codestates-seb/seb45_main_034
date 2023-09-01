@@ -7,7 +7,7 @@ app.use(express.json());
 
 const historyDatabase: HistoryRecord[] = [];
 
-//영화 목록 조회 api
+// 영화 목록 조회 API
 const movies: Movie[] = [
   { moviesID: 1, title: '영화1', genre: 'SF' },
   { moviesID: 2, title: '영화2', genre: '무료' },
@@ -17,11 +17,7 @@ app.get('/api/movies', (req: Request, res: Response) => {
   res.json({ movies });
 });
 
-app.listen(port, () => {
-  console.log(`아마 서버 작동중일듯합니다 ${port}`);
-});
-
-//시청기록 저장 api
+// 시청 기록 저장 API
 app.post('/api/history', (req: Request, res: Response) => {
   const { userID, movieID, lastPosition } = req.body;
 
@@ -34,9 +30,9 @@ app.post('/api/history', (req: Request, res: Response) => {
 
   historyDatabase.push(historyRecord);
 
-  res.json({ message: '시청기록 저장에 성공했어요' });
+  res.json({ message: '시청 기록 저장에 성공했어요' });
 });
 
 app.listen(port, () => {
-  console.log(`아마 서버 작동중일듯합니다 ${port}`);
+  console.log(`서버 작동 중입니다. 포트: ${port}`);
 });

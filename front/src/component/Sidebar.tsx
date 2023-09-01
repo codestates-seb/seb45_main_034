@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaHome, FaClock } from 'react-icons/fa';
+import { FaHome, FaClock, FaFilter } from 'react-icons/fa';
+import './CSS/button.css'
 
 interface SideBarProps {
   setSelectedCategory: (category: string) => void;
@@ -21,26 +22,34 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
 
   const handleGenreClick = (genre: string) => {
     setSelectedCategory(genre);
+    navigate(`/genres/${genre}`);
+  };
+
+  const handleHistoryClick = () => {
+    navigate('/history');
   };
 
   return (
-    <div className="sidebar">
+    <aside className="sidebar">
       <button onClick={handleHomeClick} className="home-button">
-       <FaHome className="home-icon" />
-       <span className="home-text">홈</span>
+        <FaHome className="home-icon" />
+        <span className="home-text">홈</span>
       </button>
-      <button onClick={handleCategoriesClick}>카테고리</button>
+      <button onClick={handleCategoriesClick}>
+        <FaFilter className="filter-icon" />
+        <span className='filter-text'>카테고리</span>
+      </button>
       <div className={`side-list ${showCategories ? 'show' : ''}`}>
         <button onClick={() => handleGenreClick('SF')}>SF</button>
         <button onClick={() => handleGenreClick('무료')}>무료</button>
         <button onClick={() => handleGenreClick('공포')}>공포</button>
         <button onClick={() => handleGenreClick('테스트')}>테스트</button>
       </div>
-      <button onClick={() => navigate('/history')}>
-       <FaClock className="history-icon" />
-       <span className="history-text">시청 기록</span>
+      <button onClick={handleHistoryClick}>
+        <FaClock className="history-icon" />
+        <span className="history-text">시청 기록</span>
       </button>
-    </div>
+    </aside>
   );
 };
 
