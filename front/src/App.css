@@ -1,38 +1,81 @@
-.App {
-  text-align: center;
+.app-container{
+  background-color: #838383;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.sidebar {
+  width: 17%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #333 0%, white 95%);
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 20px;
+  color: white;
+  
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin: 5px;
+  text-align: left;
+  color: white;
+  display: block;
+  margin-bottom: 5px;
+}
+.side-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 5%;
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 0.3s ease-in-out;
+  overflow-x: hidden;
+  white-space: nowrap;
+  font-size: 18px;
+}
+
+.side-list.show {
+  max-height: 300px;
+  overflow-y: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+/*홈 버튼*/
+.home-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin: 5px;
+  text-align: left;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.home-icon {
+  font-size: 24px;
+  margin-right: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.home-text {
+  font-size: 20px;
+}
+/*시청기록 버튼*/
+.history-icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+.history-text {
+  font-size: 15px;
+}
+
+.app-container {
+  display: flex;
+  align-items: flex-start;
 }
