@@ -5,6 +5,7 @@ import Home from './page/main';
 import GenrePage from './page/GenreVideo';
 import SideBar from './component/Sidebar';
 import Historypage from './page/History';
+import Movie from './page/Movie';
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -15,7 +16,7 @@ function App() {
        <nav>
          <Routes>
            <Route path='/' element={<Home/>}/>
-           <Route path='/api/stream/:movieID' element={''}/>
+           <Route path='/api/stream/:movieID' element={<Movie/>}/>
            <Route path='/genres/:genre' element={<GenrePage />}/>
            <Route path='/history' element={<Historypage/>}/>
          </Routes>
