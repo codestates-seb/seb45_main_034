@@ -6,6 +6,8 @@ import styled from "styled-components";
 const MovieContainer = styled.div`
   display: flex;
   justify-content: center;
+  background-color: #262626;
+  color: white;
 
   .player-and-details {
     display: flex;
