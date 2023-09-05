@@ -1,3 +1,4 @@
+
 .video-list {
   flex: 1;
   display: flex;
@@ -23,14 +24,17 @@
 }
 
 .video-container {
+  width: auto;
+  height: auto;
   display: flex;
   gap: 20px;
   flex-direction: row;
-  overflow-x: hidden;
+  overflow: auto;
+  white-space: nowrap;
 }
 
 .scrollable {
-  overflow-x: auto;
+  overflow: auto;
   white-space: nowrap;
 }
 

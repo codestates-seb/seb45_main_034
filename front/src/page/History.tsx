@@ -12,7 +12,7 @@ const Historypage: React.FC = () => {
             const sortedHistory = response.data.reverse();
             setHistory(sortedHistory);
         })
-        .catch((error: Error) => {
+        .catch((error: unknown) => {
             console.error('시청목록을 불러오는데 실패했어요.', error)
         });
     },[]);

@@ -41,7 +41,7 @@ const GenrePage: React.FC = () => {
   //     .then((response) => {
   //       setMovies(response.data.movies);
   //     })
-  //     .catch((error: Error) => {
+  //     .catch((error: unknown) => {
   //       console.error('Error fetching genre movies:', error);
   //     });
   // }, [genre]);
