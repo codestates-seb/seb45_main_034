@@ -5,7 +5,6 @@ import { ReactComponent as DeleteIcon } from "../images/baseline-delete-sweep.sv
 
 const CommentContainer = styled.div`
   margin: 20px;
-
   display: flex;
   flex-direction: column;
   border-radius: 5px;

@@ -1,6 +1,7 @@
 .app-container{
   background-color: #838383;
 }
+
 .sidebar {
   width: 17%;
   height: 100vh;
@@ -11,7 +12,7 @@
   align-items: center;
   padding: 20px;
   color: white;
-  
+  margin-top: 80px;
 }
 
 .sidebar button {
@@ -44,37 +45,6 @@
   overflow-y: hidden;
   transition: max-height 0.3s ease-in-out;
 }
-/*홈 버튼*/
-.home-button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  margin: 5px;
-  text-align: left;
-  color: white;
-}
-
-.home-icon {
-  font-size: 24px;
-  margin-right: 10px;
-}
-
-.home-text {
-  font-size: 20px;
-}
-/*시청기록 버튼*/
-.history-icon {
-  margin-right: 10px;
-  font-size: 18px;
-}
-.history-text {
-  font-size: 15px;
-}
-
 .app-container {
   display: flex;
   align-items: flex-start;

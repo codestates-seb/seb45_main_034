@@ -1,3 +1,11 @@
+.genre-page{
+  margin-top: 80px;
+  flex: 1;
+  flex-direction: column;
+  padding-left: 3%;
+  padding-top: 4%;
+}
+
 .genrevideo-list {
   flex: 1;
   display: flex;
@@ -31,6 +39,7 @@
 }
 
 .genrevideo-item {
+  position: relative;
   width: calc(30% - 20px);
   height: calc(30% - 10px);
   background-color: #f0f0f0;
