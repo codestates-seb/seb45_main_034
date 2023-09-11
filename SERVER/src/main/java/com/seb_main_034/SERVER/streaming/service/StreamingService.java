@@ -1,5 +1,6 @@
 package com.seb_main_034.SERVER.streaming.service;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
@@ -18,7 +19,10 @@ import java.net.URL;
 @Service
 public class StreamingService {
 
-    private AmazonS3 s3client = AmazonS3ClientBuilder.standard().build();
+    // 지역을 AP_NORTHEAST_2 (서울)로 설정
+    private AmazonS3 s3client = AmazonS3ClientBuilder.standard()
+            .withRegion(Regions.AP_NORTHEAST_2)
+            .build();
 
     public ResponseEntity<Resource> getVideoStream(String videoPath) {
         try {
@@ -35,13 +39,12 @@ public class StreamingService {
     }
 
     public String getStreamingUrl(String fileName) {
+        // 버킷 이름을 "034a"로 설정
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest("your-bucket-name", fileName);
-        generatePresignedUrlRequest.setMethod(HttpMethod.GET);  // 이 부분이 수정된 HttpMethod를 사용합니다.
+                new GeneratePresignedUrlRequest("034a", fileName);
+        generatePresignedUrlRequest.setMethod(HttpMethod.GET);
         URL url = s3client.generatePresignedUrl(generatePresignedUrlRequest);
         return url.toString();
     }
 }
-
-
 
