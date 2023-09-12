@@ -10,13 +10,15 @@ import java.util.List;
 
 @Repository
 public interface MovieSearchRepository extends JpaRepository<MovieSearch, Long> {
-    @Query("SELECT m.title FROM Movie m WHERE m.title LIKE %:keyword% OR m.genre LIKE %:keyword%")
+    @Query("SELECT m.title FROM Movie m WHERE m.title LIKE %:keyword% OR (m.genre LIKE %:keyword% AND m.genre IS NOT NULL AND m.genre != '')")
     List<String> searchMoviesByField(@Param("keyword") String keyword);
 
     @Query("SELECT m.title FROM Movie m WHERE m.title LIKE %:keyword%")
     List<String> searchMoviesByTitle(@Param("keyword") String keyword);
 
-    @Query("SELECT m.title FROM Movie m WHERE m.genre LIKE %:keyword%")
+    @Query("SELECT m.title FROM Movie m WHERE (m.genre LIKE %:keyword% AND m.genre IS NOT NULL AND m.genre != '')")
     List<String> searchMoviesByGenre(@Param("keyword") String keyword);
 }
+
+
 
