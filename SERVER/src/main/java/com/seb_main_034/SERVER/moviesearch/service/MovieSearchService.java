@@ -15,7 +15,15 @@ public class MovieSearchService {
     public List<String> searchMovies(MovieSearchDTO movieSearchDTO) {
         String keyword = movieSearchDTO.getKeyword();
         String field = movieSearchDTO.getField();
-        return movieSearchRepository.searchMoviesByField(keyword);
 
+        if ("title".equals(field)) {
+            return movieSearchRepository.searchMoviesByTitle(keyword);
+        } else if ("genre".equals(field)) {
+            return movieSearchRepository.searchMoviesByGenre(keyword);
+        } else {
+            // Fallback: Search both fields if 'field' is not specified or invalid.
+            return movieSearchRepository.searchMoviesByField(keyword);
+        }
     }
 }
+
