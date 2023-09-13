@@ -1,13 +1,12 @@
 import express, { Request, Response } from 'express';
 import { HistoryRecord, Movie } from '../type/VideoType';
-import fetch, { Response as FetchResponse } from 'node-fetch';
 
 const historyDatabase: HistoryRecord[] = [];
 
 // 영화 목록 조회 API
-export async function fetchMovies() {
+export const fetchMovies = async () => {
   try {
-    const response = await fetch('/api/movies', {
+    const response = await fetch('https://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080/api/movies', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -27,9 +26,9 @@ export async function fetchMovies() {
 }
 
 // 영화 삭제 API
-export async function deleteMovie(movieID: number) {
+export const deleteMovie = async (movieID: number) => {
   try {
-    const response = await fetch(`/api/movies/${movieID}`, {
+    const response = await fetch(`https://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080/api/movies/${movieID}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +47,7 @@ export async function deleteMovie(movieID: number) {
 }
 
 // 시청 기록 저장 API
-export async function saveWatchHistory(userID: number, movieID: number, lastPosition: number) {
+export const saveWatchHistory = async (userID: number, movieID: number, lastPosition: number) => {
   try {
     const requestData = {
       userID,
@@ -56,7 +55,7 @@ export async function saveWatchHistory(userID: number, movieID: number, lastPosi
       lastPosition,
     };
 
-    const response = await fetch('/api/history', {
+    const response = await fetch('https://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080/api/history', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
