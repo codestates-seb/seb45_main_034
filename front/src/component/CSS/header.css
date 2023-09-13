@@ -1,0 +1,198 @@
+.header {
+  flex: 1;
+  background-color: #5f9ea0;
+  color: rgb(143, 22, 22);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 10%;
+  padding: 0%;
+}
+
+.header-title {
+  font-size: 80px;
+  animation: slideAnimation 2.0s infinite alternate; 
+  flex-grow: 2; /* Allow the title to grow and take available space */
+}
+
+@keyframes slideAnimation {
+  from {
+      transform: translateX(-10px);
+  }
+  to {
+      transform: translateX(160px); 
+  }
+}
+
+.header-title-logo {
+  display: flex;
+  align-items: center;
+  padding: 0%;
+  height: 150px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  margin-right: auto; 
+  margin-left: 180px; 
+  padding: 0%;
+  height: 150px;
+}
+
+
+.header-logo img {
+  max-width: 150px;
+  height: auto;
+  margin-right: auto;
+}
+
+.login-button{
+  font-size: 18px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #c98013;
+  color: white;
+  margin-right: 10px; /* Add margin between buttons */
+}
+
+
+.join-button {
+    font-size: 18px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #0f9a52;
+    color: white;
+    margin-right: 10px; /* Add margin between buttons */
+}
+
+.login-button:hover {
+  background-color: #ffbf00; /* Lighter Orange on hover */
+}
+
+.join-button:hover {
+  background-color: #00e676; /* Lighter Green on hover */
+}
+
+.container {
+  background-color: ivory;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  margin-top: 120px;
+}
+
+.container p {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-text {
+  margin-bottom: 20px;
+}
+
+
+.input-container {
+  display: flex;
+  flex-direction: column; /* Stack label and input vertically */
+  align-items: center; /* Center align items horizontally */
+  margin-bottom: 10px;
+}
+
+.input-container label {
+  margin-bottom: 5px;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 5px;
+}
+
+.button-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.button-container button {
+  background-color: blue; /* Change the background color to blue */
+  color: white; /* Set text color to contrast with the background */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+}
+
+.button-container button:hover {
+  background-color: darkblue; /* Change the background color on hover */
+}
+
+#error-container {
+  text-align: center; /* Center-align the text */
+  color: red; /* Set the text color to red */
+  font-weight: bold; /* Make the text bold */
+}
+
+
+#google-login-button {
+  background-color: #1ad83d; 
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center; /* 아이콘과 버튼 세로 정렬 */
+  gap: 10px;
+}
+
+
+.social-buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column; /* Align buttons vertically */
+  align-items: center; /* Center align horizontally */
+  gap: 10px;
+}
+
+.facebook-button,
+.twitter-button,
+.google-button {
+  background-color: #1877F2; /* Facebook Blue */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.twitter-button {
+  background-color: #1877F2;
+}
+
+.facebook-button:hover,
+.Twitter-button:hover,
+.google-button:hover {
+  background-color: #1153A4; /* Darker shade on hover */
+}
