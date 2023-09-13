@@ -40,10 +40,8 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
         <span className='filter-text'>카테고리</span>
       </button>
       <div className={`side-list ${showCategories ? 'show' : ''}`}>
-        <button onClick={() => handleGenreClick('SF')}>SF</button>
-        <button onClick={() => handleGenreClick('무료')}>무료</button>
-        <button onClick={() => handleGenreClick('공포')}>공포</button>
-        <button onClick={() => handleGenreClick('테스트')}>테스트</button>
+        <button onClick={() => handleGenreClick('드라마')}>드라마</button>
+        <button onClick={() => handleGenreClick('로맨스')}>로맨스</button>
       </div>
       <button onClick={handleHistoryClick}>
         <FaClock className="history-icon" />

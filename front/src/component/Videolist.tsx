@@ -6,6 +6,10 @@ import { deleteMovie } from '../util/fetchVideo';
 import PopupModal from './Modal';
 import axios from 'axios';
 
+const instance = axios.create({
+  baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
+});
+
 interface GenreCounts {
   [genre: string]: number;
 }
@@ -15,7 +19,7 @@ const VideoList: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loadedMovies, setLoadedMovies] = useState<number>(5);
   const [genreCounts, setGenreCounts] = useState<GenreCounts>({});
-  const [selectedMovieID, setSelectedMovieID] = useState<number | null>(null)
+  const [selectedMovieID, setSelectedMovieID] = useState<number | null>(null);
 
   const handleMenuClick = (movieID: number) => {
     setSelectedMovieID(movieID);
@@ -33,39 +37,22 @@ const VideoList: React.FC = () => {
     }
   };
 
-  // 더미 데이터
-  const dummyData: Movie[] = [
-    { moviesID: 1, title: '더미 영화 1', genre: 'SF', posterUrl: '영화 1의 이미지 URL', },
-    { moviesID: 2, title: '더미 영화 2', genre: '무료', posterUrl: '영화 2의 이미지 URL', },
-    { moviesID: 3, title: '더미 영화 3', genre: '드라마', posterUrl: '영화 3의 이미지 URL', },
-    { moviesID: 4, title: '더미 영화 4', genre: '드라마', posterUrl: '영화 4의 이미지 URL', },
-    { moviesID: 5, title: '더미 영화 5', genre: 'SF', posterUrl: '영화 5의 이미지 URL', },
-    { moviesID: 6, title: '더미 영화 6', genre: 'SF', posterUrl: '영화 6의 이미지 URL', },
-    { moviesID: 7, title: '더미 영화 7', genre: '무료', posterUrl: '영화 7의 이미지 URL', },
-    { moviesID: 8, title: '더미 영화 8', genre: '공포', posterUrl: '영화 8의 이미지 URL', },
-    { moviesID: 9, title: '더미 영화 9', genre: 'SF', posterUrl: '영화 9의 이미지 URL', },
-    { moviesID: 10, title: '더미 영화 10', genre: 'SF', posterUrl: '영화 10의 이미지 URL', },
-    { moviesID: 11, title: '더미 영화 11', genre: 'SF', posterUrl: '영화 11의 이미지 URL', },
-    { moviesID: 12, title: '더미 영화 12', genre: 'SF', posterUrl: '영화 12의 이미지 URL', },
-  ];
+  const handleMovieClick = (movie: Movie) => {
+    // const userID = 1; // 일단 임의로 채워넣은 값
+    // const lastPosition = 0; // 일단 임의로 채워넣은 값
 
-  // 아직 못쓰는 부분 (추후 검토도 필요할것으로 보임)
-  const handleMovieClick = (movieID: number) => {
-    const userID = 1; //일단 임의로 채워넣은값
-    const lastPosition = 0; //일단 임의로 채워넣은값
+    // instance
+    //   .post('/api/history', { userID, movieId: movie.movieId, lastPosition })
+    //   .then((response) => {
+    //     console.log('History recorded:', response.data);
+    //   })
+    //   .catch((error: Error) => {
+    //     console.error('Error recording history:', error);
+    //   });
 
-    axios.post('/api/history', { userID, movieID, lastPosition })
-    .then((response) => {
-     console.log('History recorded:', response.data);
-    })
-    .catch((error: Error) => {
-     console.error('Error recording history:', error);
-    });
-
-    navigate(`/stream/${movieID}`);
+    navigate(`/stream/${movie.movieId}`);
   };
 
-  // 무한 스크롤기능
   const handleScroll = (genre: string) => (event: React.UIEvent<HTMLDivElement>) => {
     const target = event.currentTarget;
     const scrollLeft = target.scrollLeft;
@@ -76,9 +63,28 @@ const VideoList: React.FC = () => {
   };
 
   useEffect(() => {
-    setMovies(dummyData);
+    // 서버에서 데이터를 가져오는 비동기 함수를 정의합니다.
+    const fetchData = async () => {
+      try {
+        const response = await instance.get('/api/movies/all?page=1&size=10');
+        const data: any = response.data;
+  
+        if (data) {
+          setMovies(data);
+        } else {
+          console.error('서버에서 영화 목록을 불러오지 못했습니다.');
+        }
+      } catch (error) {
+        console.error('영화 목록을 불러오지 못했습니다.', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
-    const counts: GenreCounts = dummyData.reduce((acc, movie) => {
+  useEffect(() => {
+    const counts: GenreCounts = movies.reduce((acc, movie) => {
       if (acc[movie.genre]) {
         acc[movie.genre]++;
       } else {
@@ -87,7 +93,7 @@ const VideoList: React.FC = () => {
       return acc;
     }, {} as GenreCounts);
     setGenreCounts(counts);
-  }, []);
+  }, [movies]);
 
   return (
     <div className="video-list">
@@ -106,10 +112,10 @@ const VideoList: React.FC = () => {
                   .filter((movie) => movie.genre === genre)
                   .slice(0, loadedMovies)
                   .map((movie) => (
-                    <div key={movie.moviesID} className="video-item">
-                      <img src={movie.posterUrl} alt={movie.title} onClick={() => handleMovieClick(movie.moviesID)} />
-                      <div className="video-title" onClick={() => handleMovieClick(movie.moviesID)}>{movie.title}</div>
-                      <div className="menu-icon" onClick={() => handleMenuClick(movie.moviesID)}/>
+                    <div key={movie.movieId} className="video-item">
+                      <img src={movie.streamingURL} alt={movie.title} onClick={() => handleMovieClick(movie)} />
+                      <div className="video-title" onClick={() => handleMovieClick(movie)}>{movie.title}</div>
+                      <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />
                     </div>
                   ))}
               </div>
