@@ -1,8 +1,8 @@
 export type Movie = {
-    moviesID: number;
+    movieId: number;
     title: string;
     genre: string;
-    posterUrl: string;
+    streamingURL: string;
   };
   
 export type MoviesResponse = {
