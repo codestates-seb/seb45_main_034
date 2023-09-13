@@ -4,6 +4,7 @@ import { Movie } from '../type/VideoType';
 import { useNavigate } from 'react-router-dom';
 import { deleteMovie } from '../util/fetchVideo';
 import PopupModal from './Modal';
+import axios from 'axios';
 
 interface GenreCounts {
   [genre: string]: number;
@@ -21,15 +22,15 @@ const VideoList: React.FC = () => {
   };
 
   const handleDeleteClick = async () => {
-    // if (selectedMovieID !== null) {
-    //   try {
-    //     await deleteMovie(selectedMovieID);
-    //     console.log('영화 삭제 성공');
-    //     setSelectedMovieID(null);
-    //   } catch (error) {
-    //     console.error('영화 삭제 오류:', error);
-    //   }
-    // }
+    if (selectedMovieID !== null) {
+      try {
+        await deleteMovie(selectedMovieID);
+        console.log('영화 삭제 성공');
+        setSelectedMovieID(null);
+      } catch (error) {
+        console.error('영화 삭제 오류:', error);
+      }
+    }
   };
 
   // 더미 데이터
@@ -50,18 +51,18 @@ const VideoList: React.FC = () => {
 
   // 아직 못쓰는 부분 (추후 검토도 필요할것으로 보임)
   const handleMovieClick = (movieID: number) => {
-    // const userID = 1; //일단 임의로 채워넣은값
-    // const lastPosition = 0; //일단 임의로 채워넣은값
+    const userID = 1; //일단 임의로 채워넣은값
+    const lastPosition = 0; //일단 임의로 채워넣은값
 
-    //axios.post('/api/history', { userID, movieID, lastPosition })
-    //.then((response) => {
-    //  console.log('History recorded:', response.data);
-    //})
-    //.catch((error: Error) => {
-    //  console.error('Error recording history:', error);
-    //});
+    axios.post('/api/history', { userID, movieID, lastPosition })
+    .then((response) => {
+     console.log('History recorded:', response.data);
+    })
+    .catch((error: Error) => {
+     console.error('Error recording history:', error);
+    });
 
-    navigate(`/api/stream/${movieID}`);
+    navigate(`/stream/${movieID}`);
   };
 
   // 무한 스크롤기능

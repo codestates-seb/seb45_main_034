@@ -62,7 +62,7 @@ const GenrePage: React.FC = () => {
     //  console.error('Error recording history:', error);
     //});
 
-    navigate(`/api/stream/${movieID}`);
+    navigate(`/stream/${movieID}`);
   };
 
   //api사용되면 수정되야할

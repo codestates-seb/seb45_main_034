@@ -8,9 +8,10 @@ import Historypage from './page/History';
 import Movie from './page/Movie';
 import Header from './component/header';
 import Login from './component/Login';
+import MemberList from './page/MyACCount';
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   return (
       <BrowserRouter>
       <Header/>
@@ -20,9 +21,10 @@ function App() {
          <Routes>
            <Route path='/' element={<Home/>}/>
            <Route path='/login' element={<Login/>}/>
-           <Route path='/api/stream/:movieID' element={<Movie/>}/>
+           <Route path='/stream/:movieID' element={<Movie/>}/>
            <Route path='/genres/:genre' element={<GenrePage />}/>
            <Route path='/history' element={<Historypage/>}/>
+           <Route path='/mypage' element={<MemberList/>}/>
          </Routes>
        </nav>
       </div>
