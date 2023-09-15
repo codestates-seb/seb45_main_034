@@ -1,16 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import ReactPlayer from "react-player";
+import VideoTime from "./VideoTime";
 import { ReactComponent as PlayIcon } from "../images/player-play-filled.svg";
 import { ReactComponent as PauseIcon } from "../images/player-pause-fill.svg";
-import { ReactComponent as BackIcon } from "../images/player-skip-back-filled.svg";
-import { ReactComponent as ForwardIcon } from "../images/player-skip-forward-filled.svg";
+import { ReactComponent as BackwardIcon } from "../images/backward-5-seconds.svg";
+import { ReactComponent as ForwardIcon } from "../images/forward-5-seconds.svg";
 import { ReactComponent as InFullScreen } from "../images/sharp-fullscreen.svg";
-import { ReactComponent as CaptionIcon } from "../images/closed-caption-alt.svg";
+import { ReactComponent as OutFullScreen } from "../images/sharp-fullscreen-exit.svg";
+import { ReactComponent as OpenCaptionIcon } from "../images/closed-caption-outline.svg";
+import { ReactComponent as CloseCaptionIcon } from "../images/closed-caption.svg";
 import { ReactComponent as QualityIcon } from "../images/settings-linear.svg";
 import { ReactComponent as VolumeIcon } from "../images/volume-high.svg";
 import { ReactComponent as VolumeMuteIcon } from "../images/volume-mute.svg";
-import { ReactComponent as ShareIcon } from "../images/share.svg";
+import { useParams } from "react-router-dom";
+
+import axios from "axios";
+
+const instance = axios.create({
+  baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+});
 
 const VideoContainer = styled.div`
   margin: 20px;
@@ -19,8 +28,8 @@ const VideoContainer = styled.div`
 `;
 
 const ControlsContainer = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 99.9%; // 100%로 하면 전체화면일때 외곽으로 마우스커서를 보내도 컨트롤러가 보임
+  height: 99.9%; // 이렇게하면 왼쪽 가장자리 제외하고 컨트롤러 숨겨짐
   position: absolute;
   bottom: 0;
   left: 0;
@@ -38,13 +47,12 @@ const ControlsContainer = styled.div`
   }
 `;
 
-const ControlButtonBox = styled.div`
+const MiddleOption = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10rem;
   z-index: 2;
-  width: 100%;
+  width: 80%;
 `;
 
 const ControlButton = styled.button`
@@ -59,29 +67,9 @@ const ControlButton = styled.button`
   border-radius: 50%;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.6);
     transition: 0.5s ease;
   }
-`;
-
-const Input = styled.input`
-  width: 100%;
-`;
-
-const ControlOptionBox = styled.div`
-  width: 100%;
-`;
-
-const Caption = styled.div`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  text-align: center;
-  bottom: 60px;
-  overflow-wrap: break-word;
-  pointer-events: none;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
 `;
 
 const BottomOption = styled.div`
@@ -93,12 +81,47 @@ const BottomOption = styled.div`
   width: 100%;
 `;
 
+const PlaySlider = styled.input`
+  width: 100%;
+  height: 0.3rem;
+  border-radius: 0.1rem;
+  cursor: pointer;
+  background-color: white;
+  -webkit-appearance: none;
+`;
+
+const VolumeSliderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const VolumeSlider = styled(PlaySlider)`
+  width: 4rem;
+`;
+
+const Volume = styled.div`
+  display: flex;
+`;
+
+const Caption = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  text-align: center;
+  bottom: 100px;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+`;
+
 const TimeDisplay = styled.span`
   color: white;
   padding: 0 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
 `;
 
 const Title = styled.div`
@@ -118,11 +141,11 @@ const OptionsButton = styled(ControlButton)`
 
 const OptionsList = styled.div`
   display: ${({ visible }) => (visible ? "block" : "none")};
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
   overflow: hidden;
   position: absolute;
-  right: 2.5rem;
-  bottom: 2.5rem;
+  right: 2.7rem;
+  bottom: 2.7rem;
   width: 4rem;
   z-index: 3;
 `;
@@ -137,16 +160,9 @@ const Option = styled.button`
 
   &:hover {
     color: white;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
     transition: 0.5s ease;
   }
-`;
-
-const OptionTop = styled(Option)`
-  border-radius: 4px 4px 0 0;
-`;
-const OptionBottom = styled(Option)`
-  border-radius: 0 0 4px 4px;
 `;
 
 export default function VideoPlayer() {
@@ -155,11 +171,32 @@ export default function VideoPlayer() {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [seekTime, setSeekTime] = useState(0);
-  const [isQualityOptionsVisible, setQualityOptionsVisible] = useState(false); // State for quality options
-  const [isCaptionOptionsVisible, setCaptionOptionsVisible] = useState(false); // State for caption options
+  const [isQualityOptionsVisible, setQualityOptionsVisible] = useState(false);
+  const [isCaptionOptionsVisible, setCaptionOptionsVisible] = useState(false);
+  const [isVolumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [selectedCaptionLanguage, setSelectedCaptionLanguage] = useState(null);
   const [volume, setVolume] = useState(1);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const videoRef = useRef(null);
+  const { movieId } = useParams();
+
+  const [videoURL, setVideoURL] = useState("");
+
+  useEffect(() => {
+    if (movieId) {
+      instance
+        .get(`/api/movies/${movieId}`)
+        .then((response) => {
+          const streamingURL = response.data.streamingURL;
+          setVideoURL(streamingURL);
+        })
+        .catch((error) => {
+          console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
+        });
+    } else {
+      console.error("유효하지 않은 movieId입니다.");
+    }
+  }, [movieId]);
 
   // useEffect를 사용하여 키보드 이벤트를 처리
   useEffect(() => {
@@ -250,12 +287,15 @@ export default function VideoPlayer() {
   };
 
   const toggleFullScreen = () => {
-    let video = videoRef.current.getInternalPlayer();
-
-    if (!document.fullscreenElement) {
-      video.requestFullscreen();
+    if (!isFullScreen) {
+      const videoContainer = document.getElementById("video-container");
+      if (videoContainer) {
+        videoContainer.requestFullscreen();
+        setIsFullScreen(true);
+      }
     } else {
       document.exitFullscreen();
+      setIsFullScreen(false);
     }
   };
 
@@ -270,7 +310,7 @@ export default function VideoPlayer() {
   };
 
   const handleOptionQulitySelect = (option) => {
-    // Handle option selection logic here
+    // 화질 선택 기능
     console.log("Selected option:", option);
   };
 
@@ -282,19 +322,41 @@ export default function VideoPlayer() {
     }
   };
 
-  const handleVolumeChange = () => {
-    // 볼륨을 0 (음소거)과 1 (최대 볼륨) 사이에서 토글합니다.
+  const handleVolumeChange = (newVolume) => {
+    setVolume(newVolume);
+  };
+
+  const toggleVolumeSlider = () => {
+    setVolumeSliderVisible(!isVolumeSliderVisible);
+  };
+
+  const handleVolumeClick = () => {
     const newVolume = volume === 0 ? 1 : 0;
     setVolume(newVolume);
   };
 
+  const handleVolumeSliderMouseEnter = () => {
+    setVolumeSliderVisible(true);
+  };
+
+  const handleVolumeSliderMouseLeave = () => {
+    // 마우스가 볼륨 슬라이더를 떠날 때 슬라이더를 숨깁니다.
+    if (!isVolumeSliderVisible) {
+      setVolumeSliderVisible(false);
+    }
+  };
+
   return (
-    <VideoContainer>
+    <VideoContainer
+      id="video-container"
+      style={{ padding: videoURL ? "0" : "15.6rem 27.6rem" }}
+    >
       <ReactPlayer
         width="100%"
         height="100%"
         ref={videoRef}
-        url={process.env.PUBLIC_URL + "/video-sample.mp4"}
+        // url={process.env.PUBLIC_URL + "/video-sample.mp4"} // 자체 영상
+        url={videoURL} // 서버 URL 영상
         controls={false}
         playing={playing}
         volume={volume}
@@ -303,99 +365,116 @@ export default function VideoPlayer() {
       />
       <ControlsContainer>
         <Title>영화 제목</Title>
-        <ControlButtonBox>
+        <MiddleOption>
           <ControlButton onClick={handleRewind} title="5초 앞으로">
-            <BackIcon />
+            <BackwardIcon />
           </ControlButton>
-          <ControlButton onClick={handlePlayClick}>
-            {playing ? (
-              <PauseIcon title="일시중지" />
-            ) : (
-              <PlayIcon title="재생" />
-            )}
+          <ControlButton
+            onClick={handlePlayClick}
+            title={playing === false ? "재생" : "일시정지"}
+          >
+            {playing ? <PauseIcon /> : <PlayIcon />}
           </ControlButton>
-
           <ControlButton onClick={handleForward} title="5초 뒤로">
             <ForwardIcon />
           </ControlButton>
-        </ControlButtonBox>
-        <ControlOptionBox>
-          <BottomOption>
-            <OptionsButton onClick={handlePlayClick}>
-              {playing ? (
-                <PauseIcon
-                  title="일시중지"
-                  style={{ width: "1.6rem", height: "1.6rem" }}
-                />
-              ) : (
-                <PlayIcon
-                  title="재생"
-                  style={{ width: "1.6rem", height: "1.6rem" }}
-                />
-              )}
-            </OptionsButton>
-            <OptionsButton onClick={handleVolumeChange} title="볼륨">
+        </MiddleOption>
+        <BottomOption>
+          <OptionsButton
+            onClick={handlePlayClick}
+            title={playing === false ? "재생" : "일시정지"}
+          >
+            {playing ? (
+              <PauseIcon style={{ width: "1.6rem", height: "1.6rem" }} />
+            ) : (
+              <PlayIcon style={{ width: "1.6rem", height: "1.6rem" }} />
+            )}
+          </OptionsButton>
+          <Volume onMouseLeave={() => toggleVolumeSlider(true)}>
+            <OptionsButton
+              onClick={handleVolumeClick}
+              title={volume === 0 ? "음소거 해제" : "음소거 "}
+              onMouseEnter={handleVolumeSliderMouseEnter}
+              onMouseLeave={handleVolumeSliderMouseLeave}
+            >
               {volume === 0 ? <VolumeMuteIcon /> : <VolumeIcon />}
             </OptionsButton>
-            <TimeDisplay title="시간">{formatTime(currentTime)}</TimeDisplay>
-            <Input
-              type="range"
-              min={0}
-              max={duration}
-              value={currentTime}
-              playing={playing}
-              volume={volume}
-              onChange={(e) => setSeekTime(e.target.value)}
-              onMouseUp={() => {
-                if (videoRef.current) {
-                  videoRef.current.seekTo(seekTime, "seconds");
-                }
-              }}
-            />
-            <TimeDisplay title="시간">{formatTime(duration)}</TimeDisplay>
+            {isVolumeSliderVisible && (
+              <VolumeSliderContainer>
+                <VolumeSlider
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={volume}
+                  onChange={(e) =>
+                    handleVolumeChange(parseFloat(e.target.value))
+                  }
+                />
+              </VolumeSliderContainer>
+            )}
+          </Volume>
+          <TimeDisplay>{VideoTime(currentTime)}</TimeDisplay>
+          <PlaySlider
+            type="range"
+            min={0}
+            max={duration}
+            value={currentTime}
+            playing={playing}
+            volume={volume}
+            onChange={(e) => setSeekTime(e.target.value)}
+            onMouseUp={() => {
+              if (videoRef.current) {
+                videoRef.current.seekTo(seekTime, "seconds");
+              }
+            }}
+          />
+          <TimeDisplay>{VideoTime(duration)}</TimeDisplay>
+          {selectedCaptionLanguage && (
             <OptionsButton onClick={handleCaptionOptionsClick} title="자막">
-              <CaptionIcon />
+              <CloseCaptionIcon />
             </OptionsButton>
-            <OptionsList visible={isCaptionOptionsVisible}>
-              <OptionTop onClick={() => handleOptionCaptionSelect("English")}>
-                English
-              </OptionTop>
-              <Option onClick={() => handleOptionCaptionSelect("Spanish")}>
-                Spanish
-              </Option>
-              <OptionBottom
-                onClick={() => handleOptionCaptionSelect("Deutsch")}
-              >
-                Deutsch
-              </OptionBottom>
-            </OptionsList>
-            <OptionsButton onClick={handleQualityOptionsClick} title="화질">
-              <QualityIcon />
+          )}
+          {!selectedCaptionLanguage && (
+            <OptionsButton onClick={handleCaptionOptionsClick} title="자막">
+              <OpenCaptionIcon />
             </OptionsButton>
-            <OptionsList visible={isQualityOptionsVisible}>
-              <OptionTop onClick={() => handleOptionQulitySelect("1080p")}>
-                1080p
-              </OptionTop>
-              <Option onClick={() => handleOptionQulitySelect("720p")}>
-                720p
-              </Option>
-              <OptionBottom onClick={() => handleOptionQulitySelect("480p")}>
-                480p
-              </OptionBottom>
-            </OptionsList>
-            <OptionsButton onClick={toggleFullScreen} title="전체화면">
-              <InFullScreen />
-            </OptionsButton>
-          </BottomOption>
-        </ControlOptionBox>
+          )}
+          <OptionsList visible={isCaptionOptionsVisible}>
+            <Option
+              onClick={() => handleOptionCaptionSelect("한국어 자막입니다.")}
+            >
+              한국어
+            </Option>
+            <Option
+              onClick={() => handleOptionCaptionSelect("English captions")}
+            >
+              English
+            </Option>
+          </OptionsList>
+          <OptionsButton onClick={handleQualityOptionsClick} title="화질">
+            <QualityIcon />
+          </OptionsButton>
+          <OptionsList visible={isQualityOptionsVisible}>
+            <Option onClick={() => handleOptionQulitySelect("1080p")}>
+              1080p
+            </Option>
+            <Option onClick={() => handleOptionQulitySelect("720p")}>
+              720p
+            </Option>
+            <Option onClick={() => handleOptionQulitySelect("480p")}>
+              480p
+            </Option>
+          </OptionsList>
+          <OptionsButton
+            onClick={toggleFullScreen}
+            title={isFullScreen === false ? "전체화면" : "전체화면 종료"}
+          >
+            {isFullScreen ? <OutFullScreen /> : <InFullScreen />}
+          </OptionsButton>
+        </BottomOption>
       </ControlsContainer>
       <Caption>{selectedCaptionLanguage}</Caption>
     </VideoContainer>
   );
-}
-
-function formatTime(time) {
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60);
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 }

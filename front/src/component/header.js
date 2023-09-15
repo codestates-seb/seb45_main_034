@@ -1,11 +1,29 @@
-import React from "react";
-import "./CSS/header.css";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function Header() {
   const navigate = useNavigate();
+  const [isLogged, setIsLogged] = useState(false);
 
-  const handleLoginpage = () => {
+  useEffect(() => {
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      setIsLogged(true);
+    } else {
+      setIsLogged(false);
+    }
+  }, []);
+
+  const onLogoutClick = () => {
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    setIsLogged(false);
+    navigate("/");
+  };
+
+  const handleLogin = () => {
     navigate("/login");
   };
 
@@ -21,10 +39,18 @@ function Header() {
         </div>
       </div>
       <div className="header-buttons">
-        <button className="login-button" onClick={handleLoginpage}>
-          Login
-        </button>
-        <button className="join-button">Join</button>
+        {isLogged ? (
+          <button className="logout-button" onClick={onLogoutClick}>
+            Logout
+          </button>
+        ) : (
+          <>
+            <button className="login-button" onClick={handleLogin}>
+              Login
+            </button>
+            <button className="join-button">Join</button>
+          </>
+        )}
       </div>
     </div>
   );
