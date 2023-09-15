@@ -196,3 +196,14 @@
 .google-button:hover {
   background-color: #1153A4; /* Darker shade on hover */
 }
+.logout-button{
+  font-size: 18px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #c98013;
+  color: white;
+  margin-right: 10px;
+}

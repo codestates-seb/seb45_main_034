@@ -30,6 +30,8 @@
   flex-direction: row;
   overflow: auto;
   white-space: nowrap;
+  width: 300px;
+  height: 300px;
 }
 
 .scrollable {
@@ -39,11 +41,39 @@
 
 .video-item {
   position: relative;
-  width: 20%;
-  background-color: #f0f0f0;
+  width: 200px;
+  height: 250px;
+  background-color: #adadad;
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
   cursor: pointer;
+  margin-bottom:0px;
+}
+
+.video-item img {
+  width: 200px;
+  height: 200px;
+}
+.video-title {
+  font-size: 16px;
+  /* 다른 스타일 속성 추가 */
+}
+.video-description {
+  font-size: 14px;
+  color: #555;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.video-duration {
+  position: absolute;
+  bottom: 22%;
+  right: 4%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
 }

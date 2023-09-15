@@ -47,18 +47,22 @@ const GenrePage: React.FC = () => {
   };
 
   useEffect(() => {
-    instance
-      .get<MoviesResponse>(`/api/movies/all?page=1&size=10&genre=${genre}`)
-      .then((response) => {
-        if (response.data.movies) {
-          setMovies(response.data.movies);
+    const fetchData = async () => {
+      try {
+        const response = await instance.get(`/api/movies/all?page=1&size=10&genre=${genre}`);
+        const data: any = response.data;
+  
+        if (data) {
+          setMovies(data);
         } else {
           console.error('서버에서 영화 목록을 불러오지 못했습니다.');
         }
-      })
-      .catch((error: unknown) => {
-        console.error('Error fetching genre movies:', error);
-      });
+      } catch (error) {
+        console.error('영화 목록을 불러오지 못했습니다.', error);
+      }
+    };
+  
+    fetchData();
   }, [genre]);
 
   const handleScroll = () => {
@@ -85,13 +89,16 @@ const GenrePage: React.FC = () => {
         {movies.length === 0 ? (
           <NoVideosMessage />
         ) : (
-          movies.slice(0, loadedMovies).map((movie) => (
-            <div key={movie.movieId} className="genrevideo-item">
-              <img src={movie.streamingURL} alt={movie.title} onClick={() => handleMovieClick(movie)} />
-              <div className="video-title" onClick={() => handleMovieClick(movie)}>{movie.title}</div>
-              <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />
-            </div>
-          ))
+          movies
+            .filter((movie) => movie.genre === genre) // 해당 장르의 영화만 필터링
+            .slice(0, loadedMovies)
+            .map((movie) => (
+              <div key={movie.movieId} className="genrevideo-item">
+                <img src={movie.streamingURL} alt={movie.title} onClick={() => handleMovieClick(movie)} />
+                <div className="video-title" onClick={() => handleMovieClick(movie)}>{movie.title}</div>
+                <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />
+              </div>
+            ))
         )}
       </div>
       {selectedMovieID !== null && (
