@@ -9,6 +9,7 @@ import Movie from './page/Movie';
 import Header from './component/header';
 import Login from './component/Login';
 import MemberList from './page/MyACCount';
+import Singup from './page/singup';
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -25,6 +26,7 @@ function App() {
            <Route path='/genres/:genre' element={<GenrePage />}/>
            <Route path='/history' element={<Historypage/>}/>
            <Route path='/mypage' element={<MemberList/>}/>
+           <Route path='/singup' element={<Singup/>}/>
          </Routes>
        </nav>
       </div>

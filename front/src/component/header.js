@@ -19,12 +19,18 @@ function Header() {
   const onLogoutClick = () => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
+    Cookies.remove("userRoles");
     setIsLogged(false);
     navigate("/");
+    window.location.reload();
   };
 
   const handleLogin = () => {
     navigate("/login");
+  };
+
+  const handleSingup = () => {
+    navigate("/singup");
   };
 
   return (
@@ -48,7 +54,9 @@ function Header() {
             <button className="login-button" onClick={handleLogin}>
               Login
             </button>
-            <button className="join-button">Join</button>
+            <button className="join-button" onClick={handleSingup}>
+              Singup
+            </button>
           </>
         )}
       </div>
