@@ -5,6 +5,7 @@
   align-items: flex-start;
   margin: 20px;
   flex-wrap: wrap;
+  margin-top: 40px;
 }
 
 .category-list {
@@ -58,7 +59,6 @@
 }
 .video-title {
   font-size: 16px;
-  /* 다른 스타일 속성 추가 */
 }
 .video-description {
   font-size: 14px;
