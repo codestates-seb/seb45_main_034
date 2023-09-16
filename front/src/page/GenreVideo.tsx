@@ -55,17 +55,6 @@ const GenrePage: React.FC = () => {
   };
 
   const handleMovieClick = (movie: Movie) => {
-    // const userID = 1; // 일단 임의로 채워넣은 값
-    // const lastPosition = 0; // 일단 임의로 채워넣은 값
-
-    // instance
-    //   .post('/api/history', { userID, movieId: movie.movieId, lastPosition })
-    //   .then((response) => {
-    //     console.log('History recorded:', response.data);
-    //   })
-    //   .catch((error: Error) => {
-    //     console.error('Error recording history:', error);
-    //   });
   };
 
   useEffect(() => {

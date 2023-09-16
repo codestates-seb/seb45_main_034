@@ -19,8 +19,8 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "admin@gmail.com",
-    password: "1234asdf!@#",
+    email: "",
+    password: "",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -60,10 +60,12 @@ function Login() {
         console.log("Login successful:", responseData);
 
         const roles = response.data.roles;
+        const userId = response.data.userId;
 
         Cookies.set("accessToken", responseData.authorization, { path: "/" });
         Cookies.set("refreshToken", responseData.refresh, { path: "/" });
         Cookies.set("userRoles", roles, { path: "/" });
+        Cookies.set("userId", userId, { path: "/" });
 
         const accessToken = Cookies.get("accessToken");
         const refreshToken = Cookies.get("refreshToken");
@@ -105,12 +107,12 @@ function Login() {
             <label htmlFor="email">email:</label>
             <input
               type="text"
-              id="username"
-              name="username"
+              id="email"
+              name="email"
               required
               autoComplete="username"
               onChange={handleInputChange}
-              value={formData.username}
+              value={formData.email}
             />
           </div>
           <div className="input-container">
