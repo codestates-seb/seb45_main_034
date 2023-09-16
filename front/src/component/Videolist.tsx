@@ -51,7 +51,7 @@ const VideoList: React.FC = () => {
   const handleDeleteClick = async () => {
     if (selectedMovieID !== null) {
       try {
-        await deleteMovie(selectedMovieID);
+        await instance.delete(`/api/movies/${selectedMovieID}`);
         console.log('영화 삭제 성공');
         setSelectedMovieID(null);
       } catch (error) {
@@ -61,17 +61,6 @@ const VideoList: React.FC = () => {
   };
 
   const handleMovieClick = (movie: Movie) => {
-    // const userID = 1; // 일단 임의로 채워넣은 값
-    // const lastPosition = 0; // 일단 임의로 채워넣은 값
-
-    // instance
-    //   .post('/api/history', { userID, movieId: movie.movieId, lastPosition })
-    //   .then((response) => {
-    //     console.log('History recorded:', response.data);
-    //   })
-    //   .catch((error: Error) => {
-    //     console.error('Error recording history:', error);
-    //   });
   };
 
   const handleScroll = (genre: string) => (event: React.UIEvent<HTMLDivElement>) => {
@@ -182,7 +171,7 @@ const VideoList: React.FC = () => {
             <PopupModal
               title="영상 삭제"
               message="정말로 이 영상을 삭제하시겠습니까?"
-              onDeleteClick={() => {}}
+              onDeleteClick={() => handleDeleteClick()}
               onCancelClick={() => setSelectedMovieID(null)}
             />
           )}
