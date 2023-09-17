@@ -17,10 +17,6 @@ import { useParams } from "react-router-dom";
 
 import axios from "axios";
 
-const instance = axios.create({
-  baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
-});
-
 const VideoContainer = styled.div`
   margin: 20px;
   background-color: transparent;
@@ -39,10 +35,10 @@ const ControlsContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-direction: column;
-  opacity: 1; // 완성하면 0으로 변경
+  opacity: 0; // 완성하면 0으로 변경
   transition: opacity 0.5s ease;
 
-  &:hover {
+  ${VideoContainer}:hover & {
     opacity: 1;
   }
 `;
@@ -182,13 +178,17 @@ export default function VideoPlayer() {
 
   const [videoURL, setVideoURL] = useState("");
 
+  const instance = axios.create({
+    baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+  });
+
   useEffect(() => {
     if (movieId) {
       instance
         .get(`/api/movies/${movieId}`)
         .then((response) => {
-          const streamingURL = response.data.streamingURL;
-          setVideoURL(streamingURL);
+          const data = response.data.movieResponseDto;
+          setVideoURL(data);
         })
         .catch((error) => {
           console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
@@ -196,7 +196,7 @@ export default function VideoPlayer() {
     } else {
       console.error("유효하지 않은 movieId입니다.");
     }
-  }, [movieId]);
+  }, []);
 
   // useEffect를 사용하여 키보드 이벤트를 처리
   useEffect(() => {
@@ -355,8 +355,7 @@ export default function VideoPlayer() {
         width="100%"
         height="100%"
         ref={videoRef}
-        // url={process.env.PUBLIC_URL + "/video-sample.mp4"} // 자체 영상
-        url={videoURL} // 서버 URL 영상
+        url={videoURL.streamingURL} // 서버 URL 영상
         controls={false}
         playing={playing}
         volume={volume}
@@ -364,7 +363,7 @@ export default function VideoPlayer() {
         onDuration={handleDuration}
       />
       <ControlsContainer>
-        <Title>영화 제목</Title>
+        <Title>{videoURL.title}</Title>
         <MiddleOption>
           <ControlButton onClick={handleRewind} title="5초 앞으로">
             <BackwardIcon />
