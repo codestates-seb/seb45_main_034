@@ -3,12 +3,23 @@ import axios from 'axios';
 import { Movie } from '../type/VideoType';
 import '../component/CSS/popupmodal.css';
 import '../component/CSS/GenreVideo.css';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import PopupModal from '../component/Modal';
+import { formatVideoDuration } from '../component/videoduration';
+import Cookies from "js-cookie";
 
 const instance = axios.create({
   baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
+});
+
+instance.interceptors.request.use((config) => {
+  const accessToken = Cookies.get("accessToken");
+  
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
 });
 
 interface MoviesResponse {
@@ -20,30 +31,30 @@ const NoVideosMessage = () => (
 );
 
 const GenrePage: React.FC = () => {
-  const navigate = useNavigate();
   const { genre } = useParams<{ genre: string }>();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loadedMovies, setLoadedMovies] = useState<number>(6);
   const [selectedMovieID, setSelectedMovieID] = useState<number | null>(null);
+  const [userRoles, setUserRoles] = useState<boolean>();
+  const location = useLocation();
+  const [videoDurations, setVideoDurations] = useState<{ [key: number]: string }>({});
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const userRoles = Cookies.get("userRoles");
+
+    if (userRoles) {
+      setIsAdmin(userRoles === "ADMIN");
+    } else {
+      setIsAdmin(false);
+    }
+  }, []);
 
   const handleMenuClick = (movieID: number) => {
     setSelectedMovieID(movieID);
   };
 
   const handleMovieClick = (movie: Movie) => {
-    // const userID = 1; // 일단 임의로 채워넣은 값
-    // const lastPosition = 0; // 일단 임의로 채워넣은 값
-
-    // instance
-    //   .post('/api/history', { userID, movieId: movie.movieId, lastPosition })
-    //   .then((response) => {
-    //     console.log('History recorded:', response.data);
-    //   })
-    //   .catch((error: Error) => {
-    //     console.error('Error recording history:', error);
-    //   });
-
-    navigate(`/stream/${movie.movieId}`);
   };
 
   useEffect(() => {
@@ -51,7 +62,7 @@ const GenrePage: React.FC = () => {
       try {
         const response = await instance.get(`/api/movies/all?page=1&size=10&genre=${genre}`);
         const data: any = response.data;
-  
+
         if (data) {
           setMovies(data);
         } else {
@@ -61,7 +72,7 @@ const GenrePage: React.FC = () => {
         console.error('영화 목록을 불러오지 못했습니다.', error);
       }
     };
-  
+
     fetchData();
   }, [genre]);
 
@@ -82,6 +93,31 @@ const GenrePage: React.FC = () => {
     };
   }, []);
 
+  const fetchVideoDuration = async (movie: Movie) => {
+    try {
+      const video = document.createElement('video');
+      video.src = movie.streamingURL;
+  
+      await new Promise<void>((resolve, reject) => {
+        video.addEventListener('loadedmetadata', () => {
+          const duration = video.duration;
+          videoDurations[movie.movieId] = formatVideoDuration(duration);
+          resolve();
+        });
+  
+        video.addEventListener('error', (error) => {
+          console.error('비디오를 로드하는 중 오류 발생:', error);
+          reject(error);
+        });
+  
+        video.load();
+      });
+    } catch (error) {
+      console.error('비디오 길이를 가져오는 중 오류 발생:', error);
+      videoDurations[movie.movieId] = '00:00';
+    }
+  };
+
   return (
     <main className="genre-page">
       <h2>{genre}</h2>
@@ -90,15 +126,25 @@ const GenrePage: React.FC = () => {
           <NoVideosMessage />
         ) : (
           movies
-            .filter((movie) => movie.genre === genre) // 해당 장르의 영화만 필터링
+            .filter((movie) => movie.genre === genre)
             .slice(0, loadedMovies)
-            .map((movie) => (
-              <div key={movie.movieId} className="genrevideo-item">
-                <img src={movie.streamingURL} alt={movie.title} onClick={() => handleMovieClick(movie)} />
-                <div className="video-title" onClick={() => handleMovieClick(movie)}>{movie.title}</div>
-                <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />
-              </div>
-            ))
+            .map((movie) => {
+              const duration = videoDurations[movie.movieId] || '00:00';
+  
+              return (
+                <div key={movie.movieId} className="genrevideo-item">
+                  <Link to={`/stream/${movie.movieId}`}>
+                  <img src={movie.previewPicture} alt={movie.title} onClick={() => handleMovieClick(movie)} />
+                  <div className="video-title" onClick={() => handleMovieClick(movie)}>
+                    {movie.title}
+                  </div>
+                  <p className="genrevideo-description">{movie.description}</p>
+                  </Link>
+                  {isAdmin && <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />}
+                  <div className="video-duration">{formatVideoDuration(parseFloat(duration))}</div>
+                </div>
+              );
+            })
         )}
       </div>
       {selectedMovieID !== null && (
@@ -110,7 +156,7 @@ const GenrePage: React.FC = () => {
         />
       )}
     </main>
-  );
+  );  
 };
 
 export default GenrePage;

@@ -19,8 +19,8 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "admin@gmail.com",
-    password: "1234asdf!@#",
+    email: "",
+    password: "",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -56,24 +56,26 @@ function Login() {
       const response = await instance.post("/api/users/login", loginData);
 
       if (response.status === 200) {
-        const responseData = response.data;
+        const responseData = response.headers;
         console.log("Login successful:", responseData);
 
-        const roles = responseData.roles;
+        const roles = response.data.roles;
+        const userId = response.data.userId;
 
-        // 저장된 액세스 토큰과 리프레시 토큰을 로컬 스토리지에 설정
-        localStorage.setItem("accessToken", responseData.accessToken);
-        localStorage.setItem("refreshToken", responseData.refreshToken);
+        Cookies.set("accessToken", responseData.authorization, { path: "/" });
+        Cookies.set("refreshToken", responseData.refresh, { path: "/" });
+        Cookies.set("userRoles", roles, { path: "/" });
+        Cookies.set("userId", userId, { path: "/" });
 
-        const accessToken = localStorage.getItem("accessToken");
-        const refreshToken = localStorage.getItem("refreshToken");
-
+        const accessToken = Cookies.get("accessToken");
+        const refreshToken = Cookies.get("refreshToken");
         console.log("Access Token:", accessToken);
         console.log("Refresh Token:", refreshToken);
 
         setErrorMessage("");
 
         navigate("/", { state: { roles } });
+        window.location.reload();
       } else {
         console.error("Login failed. Try again!");
         setErrorMessage("Login failed. Try again!");
@@ -105,12 +107,12 @@ function Login() {
             <label htmlFor="email">email:</label>
             <input
               type="text"
-              id="username"
-              name="username"
+              id="email"
+              name="email"
               required
               autoComplete="username"
               onChange={handleInputChange}
-              value={formData.username}
+              value={formData.email}
             />
           </div>
           <div className="input-container">

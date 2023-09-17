@@ -177,6 +177,7 @@ export default function VideoPlayer() {
   const { movieId } = useParams();
 
   const [videoURL, setVideoURL] = useState("");
+  const [movieData, setMovieData] = useState(null);
 
   const instance = axios.create({
     baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
@@ -187,8 +188,9 @@ export default function VideoPlayer() {
       instance
         .get(`/api/movies/${movieId}`)
         .then((response) => {
-          const data = response.data.movieResponseDto;
-          setVideoURL(data);
+          const streamingURL = response.data.movieResponseDto;
+          setVideoURL(streamingURL);
+          setMovieData(streamingURL);
         })
         .catch((error) => {
           console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
@@ -355,7 +357,7 @@ export default function VideoPlayer() {
         width="100%"
         height="100%"
         ref={videoRef}
-        url={videoURL.streamingURL} // 서버 URL 영상
+        url={videoURL.streamingURL}
         controls={false}
         playing={playing}
         volume={volume}
@@ -363,7 +365,7 @@ export default function VideoPlayer() {
         onDuration={handleDuration}
       />
       <ControlsContainer>
-        <Title>{videoURL.title}</Title>
+        <Title>{movieData ? movieData.title : ""}</Title>
         <MiddleOption>
           <ControlButton onClick={handleRewind} title="5초 앞으로">
             <BackwardIcon />
