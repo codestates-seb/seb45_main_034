@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import StarRating from "../component/StarRating";
 import axios from "axios";
@@ -173,20 +173,31 @@ export default function MovieComment() {
   const [newCommentText, setNewCommentText] = useState("");
   const [editedCommentText, setEditedCommentText] = useState("");
   const [rating, setRating] = useState(0.5);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState("");
   const [sortingOption, setSortingOption] = useState("newest");
   const [editingIndex, setEditingIndex] = useState(null);
+  const [commentIdToEdit, setcommentIdToEdit] = useState();
 
   const { movieId } = useParams();
-  const { commentId } = useParams();
-  const accessToken = Cookies.get("accessToken");
   const userId = Cookies.get("userId");
 
-  const commentDate = (date) => formatDate(date);
+  const instance = axios.create({
+    baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+  });
+
+  instance.interceptors.request.use((config) => {
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  });
 
   const sortComments = (option) => {
     if (option === "newest") {
-      return [...comments].sort((a, b) => b.date - a.date);
+      return [...comments].sort((a, b) => b.createAt.localeCompare(a.createAt));
     } else if (option === "star-rating") {
       return [...comments].sort((a, b) => b.rating - a.rating);
     }
@@ -201,11 +212,24 @@ export default function MovieComment() {
     setRating(newRating);
   };
 
-  const instance = axios.create({
-    baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
-  });
+  useEffect(() => {
+    if (movieId) {
+      instance
+        .get(`/api/movies/${movieId}`)
+        .then((response) => {
+          const data = response.data.commentList;
+          setNewCommentText(data);
+          setComments(data);
+        })
+        .catch((error) => {
+          console.error("", error);
+        });
+    } else {
+      console.error("");
+    }
+  }, []);
 
-  // 댓글등록
+  // 댓글 등록
   const handleSubmit = () => {
     const newComment = {
       nickName: userId,
@@ -215,77 +239,81 @@ export default function MovieComment() {
       modifyAt: new Date(),
     };
 
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
+    instance
+      .post(`/api/comment/${movieId}/add`, newComment)
+      .then((response) => {
+        console.log("댓글 등록 성공", response.data);
+        setNewCommentText("");
+        setRating(0.5);
 
-    if (movieId) {
-      instance
-        .post(`/api/comment/${movieId}/add`, newComment, { headers })
-        .then((response) => {
-          setComments([...comments, newComment]);
-          setNewCommentText("");
-          setRating(0.5);
-        })
-        .catch((error) => {
-          console.error("댓글 작성 오류:", error);
-        });
-    }
+        const ratingData = {
+          nickName: userId,
+          movieId: movieId,
+          rating: rating,
+        };
 
-    // 자체 댓글등록
-    // const newComment = {
-    // date: new Date(),
-    // newCommentText,
-    // rating,
-    // }
-    // setComments([...comments, newComment]);
-    // setNewCommentText("");
-    // setRating(0.5);
+        instance
+          .post("/api/ratings", ratingData)
+          .then((response) => {
+            console.log("영화 평점 저장 성공", response.data);
+          })
+          .catch((error) => {
+            console.error("영화 평점 저장 오류", error);
+          });
+
+        instance
+          .get(`/api/movies/${movieId}`)
+          .then((response) => {
+            const data = response.data.commentList;
+            setComments(data);
+            setNewCommentText("");
+            setRating(0.5);
+          })
+          .catch((error) => {
+            console.error("", error);
+          });
+      })
+      .catch((error) => {
+        console.error("댓글 등록 오류:", error);
+      });
   };
 
   const handleEditComment = (index) => {
     const commentToEdit = comments[index];
     setEditedCommentText(commentToEdit.newCommentText);
     setEditingIndex(index);
+    setcommentIdToEdit(commentToEdit.commentId);
+    handleUpdateComment(index, commentIdToEdit);
   };
 
   // 댓글 수정
-  const handleUpdateComment = (index) => {
+  const handleUpdateComment = (index, commentId) => {
+    const commentToEdit = comments[index];
     const updatedComment = {
       text: editedCommentText,
-      nickName: userId,
-      rating: rating,
-      createAt: new Date(),
-      modifyAt: new Date(),
     };
 
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    if (movieId && commentId) {
-      instance
-        .patch(`/api/comment/${movieId}/update/${commentId}`, updatedComment, {
-          headers,
-        })
-        .then((response) => {
-          const updatedComments = [...comments];
-          updatedComments[index].newCommentText = editedCommentText;
-          updatedComments[index].date = new Date();
-          updatedComments[index].isEdited = true;
-          setComments(updatedComments);
-          setEditingIndex(null);
-          setEditedCommentText("");
-        })
-        .catch((error) => {
-          console.error("댓글 수정 오류:", error);
-        });
-    }
+    instance
+      .patch(
+        `/api/comment/${movieId}/update/${commentToEdit.commentId}`,
+        updatedComment
+      )
+      .then((response) => {
+        const updatedComments = [...comments];
+        updatedComments[index].text = editedCommentText;
+        updatedComments[index].isEdited = true;
+        setComments(updatedComments);
+        setEditingIndex(null);
+        setEditedCommentText("");
+      })
+      .catch((error) => {
+        console.error("댓글 수정 오류:", error);
+      });
 
     // 자체 댓글 수정
     // const updatedComments = [...comments];
-    // updatedComments[index].newCommentText = editedCommentText;
-    // updatedComments[index].date = new Date();
+    // updatedComments[index].text = editedCommentText;
+    // updatedComments[index].createAt = new Date();
     // updatedComments[index].isEdited = true;
     // setComments(updatedComments);
     // setEditingIndex(null);
@@ -298,53 +326,28 @@ export default function MovieComment() {
   };
 
   // 댓글 삭제
-  const handleDeleteComment = (index) => {
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
+  const handleDeleteComment = async (index) => {
+    try {
+      const commentToEdit = comments[index];
 
-    if (movieId && commentId) {
-      instance
-        .delete(`/api/comment/${movieId}/delete/${commentId}`, { headers })
-        .then((response) => {
-          const updatedComments = [...comments];
-          updatedComments.splice(index, 1);
-          setComments(updatedComments);
-        })
-        .catch((error) => {
-          console.error("댓글 삭제 오류:", error);
-        });
+      await instance.delete(
+        `/api/comment/${movieId}/delete/${commentToEdit.commentId}`
+      );
+
+      const updatedComments = [...comments];
+      updatedComments.splice(index, 1);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error("댓글 삭제 오류:", error);
     }
-
-    //자체 댓글 삭제
-    // const updatedComments = [...comments];
-    // updatedComments.splice(index, 1);
-    // setComments(updatedComments);
   };
-
-  // 별점 서버 전송
-  const ratingData = {
-    userId,
-    movieId,
-    rating,
-  };
-
-  instance
-    .post("/api/ratings", ratingData)
-    .then((response) => {
-      console.log("영화 평점 저장 성공:", response.data);
-    })
-    .catch((error) => {
-      console.error("영화 평점 저장 오류:", error);
-    });
-  //
 
   return (
     <CommentContainer>
       <StarRating onRatingChange={handleRatingChange} />
       <CommentInput
         placeholder="댓글을 작성해주세요."
-        value={newCommentText}
+        // value={newCommentText} // 댓글을 등록한만큼의 {object}가 입력창에 뜸
         onChange={handleCommentChange}
       />
       <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
@@ -376,7 +379,7 @@ export default function MovieComment() {
         </div>
         {sortComments(sortingOption).map((item, index) => (
           <CommentBox key={index}>
-            <div className="comment-user">댓글 작성자: {item.nickName}</div>
+            <div className="comment-user">{item.nickName}</div>
             <div className="comment-rating">
               <span className="star-color">★</span> {item.rating * 1} / 5
             </div>
@@ -388,11 +391,13 @@ export default function MovieComment() {
                 style={{ width: "16.4rem", height: "8rem" }}
               />
             ) : (
-              <div className="comment">{item.newCommentText}</div>
+              <div className="comment">{item.text}</div>
             )}
             <div className="box-space-between">
               <div className="comment-date">
-                {commentDate(item.date)}
+                {formatDate(new Date(item.createAt))}
+                {/* 시간대가 댓글을 등록한 시점이 아님 */}
+                {/* {item.createAt} */}
                 {item.isEdited && <span>(수정됨)</span>}
               </div>
               {editingIndex === index ? (

@@ -16,6 +16,7 @@ import { ReactComponent as VolumeMuteIcon } from "../images/volume-mute.svg";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const VideoContainer = styled.div`
   margin: 20px;
@@ -137,7 +138,7 @@ const OptionsButton = styled(ControlButton)`
 
 const OptionsList = styled.div`
   display: ${({ visible }) => (visible ? "block" : "none")};
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: white;
   overflow: hidden;
   position: absolute;
   right: 2.7rem;
@@ -156,7 +157,7 @@ const Option = styled.button`
 
   &:hover {
     color: white;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     transition: 0.5s ease;
   }
 `;
@@ -183,6 +184,16 @@ export default function VideoPlayer() {
     baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
   });
 
+  instance.interceptors.request.use((config) => {
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  });
+
   useEffect(() => {
     if (movieId) {
       instance
@@ -200,63 +211,42 @@ export default function VideoPlayer() {
     }
   }, []);
 
-  // useEffect를 사용하여 키보드 이벤트를 처리
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (event.key === " ") {
-        // 스페이스바 키가 눌렸을 때 재생 및 일시정지를 토글
-        setPlaying((prevPlaying) => !prevPlaying);
-        setScreenClicked(true);
-        // 스페이스바의 기본 동작을 차단
-        event.preventDefault();
-      }
-    };
+  // // 키보드 이벤트를 처리하는 함수
+  // const handleKeyPress = (event) => {
+  //   if (event.key === " ") {
+  //     // 스페이스바 키가 눌렸을 때 재생 및 일시정지를 토글
+  //     setPlaying((prevPlaying) => !prevPlaying);
+  //     setScreenClicked(true); // 댓글작성중 스페이스바를 누르면 비디오가 작성되어서 일단 주석처리
+  //     // 스페이스바의 기본 동작을 차단
+  //     event.preventDefault();
+  //   } else if (event.key === "ArrowLeft") {
+  //     // 왼쪽 방향키 눌렸을 때 비디오 5초 앞으로 이동
+  //     handleSeek(-5);
+  //   } else if (event.key === "ArrowRight") {
+  //     // 오른쪽 방향키 눌렸을 때 비디오 5초 뒤로 이동
+  //     handleSeek(5);
+  //   }
+  // };
 
-    // 이 컴포넌트가 마운트되었을 때 키보드 이벤트 리스너 추가
-    window.addEventListener("keydown", handleKeyPress);
+  // // 비디오 시간을 변경하는 함수
+  // const handleSeek = (seconds) => {
+  //   if (videoRef.current) {
+  //     const newSeekTime = currentTime + seconds;
+  //     setSeekTime(newSeekTime);
+  //     videoRef.current.seekTo(newSeekTime);
+  //   }
+  // };
 
-    // 이 컴포넌트가 언마운트될 때 키보드 이벤트 리스너 제거
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행
+  // // useEffect를 사용하여 키보드 이벤트 리스너 추가
+  // useEffect(() => {
+  //   // 이 컴포넌트가 마운트되었을 때 키보드 이벤트 리스너 추가
+  //   window.addEventListener("keydown", handleKeyPress);
 
-  // 키보드 이벤트를 처리하는 함수
-  const handleKeyPress = (event) => {
-    if (event.key === " ") {
-      // 스페이스바 키가 눌렸을 때 재생 및 일시정지를 토글
-      setPlaying((prevPlaying) => !prevPlaying);
-      setScreenClicked(true);
-      // 스페이스바의 기본 동작을 차단
-      event.preventDefault();
-    } else if (event.key === "ArrowLeft") {
-      // 왼쪽 방향키 눌렸을 때 비디오 5초 앞으로 이동
-      handleSeek(-5);
-    } else if (event.key === "ArrowRight") {
-      // 오른쪽 방향키 눌렸을 때 비디오 5초 뒤로 이동
-      handleSeek(5);
-    }
-  };
-
-  // 비디오 시간을 변경하는 함수
-  const handleSeek = (seconds) => {
-    if (videoRef.current) {
-      const newSeekTime = currentTime + seconds;
-      setSeekTime(newSeekTime);
-      videoRef.current.seekTo(newSeekTime);
-    }
-  };
-
-  // useEffect를 사용하여 키보드 이벤트 리스너 추가
-  useEffect(() => {
-    // 이 컴포넌트가 마운트되었을 때 키보드 이벤트 리스너 추가
-    window.addEventListener("keydown", handleKeyPress);
-
-    // 이 컴포넌트가 언마운트될 때 키보드 이벤트 리스너 제거
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  });
+  //   // 이 컴포넌트가 언마운트될 때 키보드 이벤트 리스너 제거
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyPress);
+  //   };
+  // });
 
   const handlePlayClick = () => {
     setPlaying(!playing);

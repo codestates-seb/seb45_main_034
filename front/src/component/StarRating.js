@@ -34,7 +34,7 @@ const RatingInput = styled.input`
 `;
 
 const StarRating = ({ onRatingChange }) => {
-  const [rating, setRating] = useState(0.5);
+  const [rating, setRating] = useState(5);
 
   const handleRatingChange = (event) => {
     const newRating = parseFloat(event.target.value);

@@ -23,15 +23,6 @@
   flex-grow: 2; /* Allow the title to grow and take available space */
 }
 
-@keyframes slideAnimation {
-  from {
-      transform: translateX(-10px);
-  }
-  to {
-      transform: translateX(160px); 
-  }
-}
-
 .header-title-logo {
   display: flex;
   align-items: center;
