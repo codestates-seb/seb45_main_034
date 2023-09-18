@@ -207,3 +207,39 @@
   color: white;
   margin-right: 10px;
 }
+.profile-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  /* right: 50%; */
+}
+
+.profile-image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.add-movie-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  margin-right: 10px;
+}
+
+.add-movie-button:hover {
+  text-decoration: underline;
+}
+
+.header-buttons {
+  display: flex; /* 이 부분을 flex로 변경 */
+  align-items: center; /* 아이템들을 세로 가운데 정렬 */
+}

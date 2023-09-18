@@ -3,7 +3,7 @@ export type Movie = {
     title: string;
     genre: string;
     streamingURL: string;
-    previewPicture: string;
+    previewPicture?: string;
     description: string;
     duration?: any;
   };

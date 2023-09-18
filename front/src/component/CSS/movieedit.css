@@ -1,0 +1,53 @@
+.movieedit-container {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .movieedit-h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .movieedit-label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .movieedit-input[type="text"],
+  .movieedit-textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .movieedit-textarea {
+    height: 150px;
+  }
+  
+  .movieedit-button {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .movieedit-button:hover {
+    background-color: #0056b3;
+  }

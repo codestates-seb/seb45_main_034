@@ -14,7 +14,7 @@
   }
   
   .menu-icon::before {
-    content: '×';
+    content: '...';
     font-size: 35px;
   }
   

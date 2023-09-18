@@ -19,8 +19,8 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "admin@gmail.com",
+    password: "1234asdf!@#",
   });
 
   const [errorMessage, setErrorMessage] = useState("");

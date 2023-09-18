@@ -1,0 +1,109 @@
+
+.Signup-container {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .Signup-label {
+    margin-bottom: 5px;
+    color: black;
+    font-size: 15px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .Signup-input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: black;
+    margin-bottom: 10px;
+  }
+    
+  /* Styles for the main signup button and social signup buttons */
+  .Signup-button {
+    width: auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px; 
+    background-color: #007bff;
+    color: white;
+     }
+
+  .Signup-button:hover {
+    background-color: #1a3dea;
+  }
+
+  .Signupfacebook-button,
+  .Signuptwitter-button,
+  .Signupgoogle-button {
+    width: auto;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+  }
+  
+  /* Add hover styles to make buttons colorful and beautiful on hover */
+  
+  .Signupfacebook-button:hover,
+  .Signuptwitter-button:hover,
+  .Signupgoogle-button:hover {
+    background-color: #9822ff;
+  }
+  
+  /* Styles for the Signup-social-buttons container */
+  .Signupsocial-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 40px;
+    margin-bottom: 1px;
+  }
+  
+  /* Add margin-right to create a 10px gap between .Signsocial-button elements */
+
+  .Signupfacebook-button,
+  .Signuptwitter-button,
+  .Signupgoogle-button {
+    flex: 2;
+    padding: 10px 20px;
+    color: rgb(222, 223, 235);
+    font-size: 14px;
+    margin-right: 5px;
+  }
+
+  .Signup-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .Signup-link {
+    color: #61dafb;
+  }
+  

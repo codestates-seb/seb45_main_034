@@ -14,6 +14,8 @@ import { ReactComponent as QualityIcon } from "../images/settings-linear.svg";
 import { ReactComponent as VolumeIcon } from "../images/volume-high.svg";
 import { ReactComponent as VolumeMuteIcon } from "../images/volume-mute.svg";
 import { useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+import ErrorModal from "./ErrorModal";
 
 import axios from "axios";
 
@@ -175,12 +177,24 @@ export default function VideoPlayer() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const videoRef = useRef(null);
   const { movieId } = useParams();
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [videoURL, setVideoURL] = useState("");
   const [movieData, setMovieData] = useState(null);
 
   const instance = axios.create({
     baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+  });
+
+  instance.interceptors.request.use((config) => {
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
   });
 
   useEffect(() => {
@@ -193,7 +207,12 @@ export default function VideoPlayer() {
           setMovieData(streamingURL);
         })
         .catch((error) => {
-          console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
+          if (error.response && error.response.status === 401) {
+            setErrorMessage("로그인 후 다시 시도해주세요");
+            setErrorModalVisible(true);
+          } else {
+            console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
+          }
         });
     } else {
       console.error("유효하지 않은 movieId입니다.");
@@ -476,6 +495,11 @@ export default function VideoPlayer() {
         </BottomOption>
       </ControlsContainer>
       <Caption>{selectedCaptionLanguage}</Caption>
+      <ErrorModal
+        isOpen={errorModalVisible}
+        message={errorMessage}
+        onClose={() => setErrorModalVisible(false)}
+      />
     </VideoContainer>
   );
 }

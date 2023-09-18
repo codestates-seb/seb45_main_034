@@ -17,7 +17,7 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
   };
 
   const handleCategoriesClick = () => {
-    setShowCategories(!showCategories); // 카테고리 토글
+    setShowCategories(!showCategories);
   };
 
   const handleGenreClick = (genre: string) => {
@@ -40,8 +40,8 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
         <span className='filter-text'>카테고리</span>
       </button>
       <div className={`side-list ${showCategories ? 'show' : ''}`}>
+      <button onClick={() => handleGenreClick('액션')}>액션</button>
         <button onClick={() => handleGenreClick('드라마')}>드라마</button>
-        <button onClick={() => handleGenreClick('로맨스')}>로맨스</button>
       </div>
       <button onClick={handleHistoryClick}>
         <FaClock className="history-icon" />
