@@ -1,52 +1,36 @@
 .header {
-  flex: 1;
-  background-color: #5f9ea0;
+  background-color: #333;
   color: rgb(143, 22, 22);
-  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   z-index: 3;
-  height: 10%;
-  padding: 0%;
+  height: 5rem;
 }
 
 .header-title {
+  margin-left: 2rem;
   font-size: 80px;
-  animation: slideAnimation 2.0s infinite alternate; 
   flex-grow: 2; /* Allow the title to grow and take available space */
 }
 
 .header-title-logo {
   display: flex;
-  align-items: center;
-  padding: 0%;
-  height: 150px;
 }
 
 .header-logo {
   display: flex;
   align-items: center;
-  margin-right: auto; 
-  margin-left: 180px; 
-  padding: 0%;
-  height: 150px;
+  margin-left: 20px;
 }
-
 
 .header-logo img {
-  max-width: 150px;
-  height: auto;
-  margin-right: auto;
+  width: 150px;
 }
 
-.login-button{
+.login-button {
   font-size: 18px;
   padding: 12px 24px;
   border: none;
@@ -58,17 +42,16 @@
   margin-right: 10px; /* Add margin between buttons */
 }
 
-
 .join-button {
-    font-size: 18px;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #0f9a52;
-    color: white;
-    margin-right: 10px; /* Add margin between buttons */
+  font-size: 18px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #0f9a52;
+  color: white;
+  margin-right: 10px; /* Add margin between buttons */
 }
 
 .login-button:hover {
@@ -96,7 +79,6 @@
 .login-text {
   margin-bottom: 20px;
 }
-
 
 .input-container {
   display: flex;
@@ -139,9 +121,8 @@
   font-weight: bold; /* Make the text bold */
 }
 
-
 #google-login-button {
-  background-color: #1ad83d; 
+  background-color: #1ad83d;
   color: white;
   padding: 12px 24px;
   border: none;
@@ -152,7 +133,6 @@
   align-items: center; /* 아이콘과 버튼 세로 정렬 */
   gap: 10px;
 }
-
 
 .social-buttons {
   margin-top: 20px;
@@ -165,7 +145,7 @@
 .facebook-button,
 .twitter-button,
 .google-button {
-  background-color: #1877F2; /* Facebook Blue */
+  background-color: #1877f2; /* Facebook Blue */
   color: white;
   padding: 10px 20px;
   border: none;
@@ -179,15 +159,15 @@
 }
 
 .twitter-button {
-  background-color: #1877F2;
+  background-color: #1877f2;
 }
 
 .facebook-button:hover,
 .Twitter-button:hover,
 .google-button:hover {
-  background-color: #1153A4; /* Darker shade on hover */
+  background-color: #1153a4; /* Darker shade on hover */
 }
-.logout-button{
+.logout-button {
   font-size: 18px;
   padding: 12px 24px;
   border: none;
@@ -197,4 +177,41 @@
   background-color: #c98013;
   color: white;
   margin-right: 10px;
+}
+.profile-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  /* right: 50%; */
+}
+
+.profile-image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.add-movie-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  margin-right: 10px;
+}
+
+.add-movie-button:hover {
+  text-decoration: underline;
+}
+
+.header-buttons {
+  display: flex; /* 이 부분을 flex로 변경 */
+  align-items: center; /* 아이템들을 세로 가운데 정렬 */
+  padding-right: 25px;
 }

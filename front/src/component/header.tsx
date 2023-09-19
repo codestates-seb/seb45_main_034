@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import userimg from '../images/userimg.png'
 import UserProfileMenu from "./profilemenu";
+import { FaPlus } from 'react-icons/fa';
 
 const instance = axios.create({
   baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
@@ -22,9 +23,20 @@ instance.interceptors.request.use((config) => {
 function Header() {
   const navigate = useNavigate();
   const [isLogged, setIsLogged] = useState(false);
-  const [userProfileImageLink, setUserProfileImageLink] = useState(null);
+  const [userProfileImageLink, setUserProfileImageLink] = useState(userimg);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const userRoles = Cookies.get("userRoles");
+
+    if (userRoles) {
+      setIsAdmin(userRoles === "ADMIN");
+    } else {
+      setIsAdmin(false);
+    }
+  }, []);
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -49,7 +61,7 @@ function Header() {
       }
 
       const response = await instance.get(`/api/users/info/${userId}`);
-      const { userProfileImageLink } = response.data;
+      const userProfileImageLink = response.data.proFilePicture;
 
       setUserProfileImageLink(userProfileImageLink || userimg);
     } catch (error) {
@@ -62,13 +74,17 @@ function Header() {
   };
 
   const handleSingup = () => {
-    navigate("/singup");
+    navigate("/signup");
   };
 
   const handleProfileClick = () => {
     setIsMenuOpen(!isMenuOpen);
     setIsOpen(!isOpen);
   };
+
+  const handleAddMovie = () => {
+    navigate('/movie/add')
+  }
 
   return (
     <div className="header">
@@ -88,6 +104,11 @@ function Header() {
             <img src={userProfileImageLink || userimg} alt="User Profile" onClick={handleProfileClick} />
               {isMenuOpen && <UserProfileMenu userProfileImageLink={userProfileImageLink} onClose={() => setIsMenuOpen(false)} />}
             </div>
+            {isAdmin && (
+              <button className="add-movie-button" onClick={handleAddMovie}>
+                <FaPlus />
+              </button>
+              )}
           </>
         ) : (
           <>

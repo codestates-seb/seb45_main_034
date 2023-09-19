@@ -43,6 +43,10 @@
   margin-right: 10px;
   font-size: 15px;
   color: white;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.8);
+  }
 }
 .recommend-text {
   font-size: 15px;

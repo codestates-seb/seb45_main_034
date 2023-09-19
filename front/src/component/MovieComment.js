@@ -6,6 +6,20 @@ import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import formatDate from "./formatDate";
 
+const instance = axios.create({
+  baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+});
+
+instance.interceptors.request.use((config) => {
+  const accessToken = Cookies.get("accessToken");
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
+});
+
 const CommentContainer = styled.div`
   margin: 20px;
   display: flex;
@@ -177,6 +191,7 @@ export default function MovieComment() {
   const [sortingOption, setSortingOption] = useState("newest");
   const [editingIndex, setEditingIndex] = useState(null);
   const [commentIdToEdit, setcommentIdToEdit] = useState();
+  const [ratings, setRatings] = useState();
 
   const { movieId } = useParams();
   const userId = Cookies.get("userId");
@@ -218,6 +233,8 @@ export default function MovieComment() {
         .get(`/api/movies/${movieId}`)
         .then((response) => {
           const data = response.data.commentList;
+          const rdata = response.data.ratingList;
+          setRatings(rdata);
           setNewCommentText(data);
           setComments(data);
         })
@@ -341,7 +358,7 @@ export default function MovieComment() {
       console.error("댓글 삭제 오류:", error);
     }
   };
-
+console.log(rating)
   return (
     <CommentContainer>
       <StarRating onRatingChange={handleRatingChange} />
@@ -381,7 +398,7 @@ export default function MovieComment() {
           <CommentBox key={index}>
             <div className="comment-user">{item.nickName}</div>
             <div className="comment-rating">
-              <span className="star-color">★</span> {item.rating * 1} / 5
+              <span className="star-color">★</span> {ratings.rating * 1} / 5
             </div>
             {editingIndex === index ? (
               <CommentInput

@@ -14,7 +14,7 @@ import { ReactComponent as QualityIcon } from "../images/settings-linear.svg";
 import { ReactComponent as VolumeIcon } from "../images/volume-high.svg";
 import { ReactComponent as VolumeMuteIcon } from "../images/volume-mute.svg";
 import { useParams } from "react-router-dom";
-
+import ErrorModal from "./ErrorModal";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -176,6 +176,8 @@ export default function VideoPlayer() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const videoRef = useRef(null);
   const { movieId } = useParams();
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [videoURL, setVideoURL] = useState("");
   const [movieData, setMovieData] = useState(null);
@@ -204,12 +206,19 @@ export default function VideoPlayer() {
           setMovieData(streamingURL);
         })
         .catch((error) => {
-          console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
+          if (error.response && error.response.status === 401) {
+            setErrorMessage("로그인 후 다시 시도해주세요");
+            setErrorModalVisible(true);
+          } else {
+            console.error("비디오 URL을 가져오는 동안 오류 발생:", error);
+          }
         });
     } else {
       console.error("유효하지 않은 movieId입니다.");
     }
   }, []);
+
+  // 키보드 스페이스바, 왼쪽, 오른쪽 방향키 댓글입력때도 작동하는 이슈
 
   // // 키보드 이벤트를 처리하는 함수
   // const handleKeyPress = (event) => {
@@ -466,6 +475,11 @@ export default function VideoPlayer() {
         </BottomOption>
       </ControlsContainer>
       <Caption>{selectedCaptionLanguage}</Caption>
+      <ErrorModal
+        isOpen={errorModalVisible}
+        message={errorMessage}
+        onClose={() => setErrorModalVisible(false)}
+      />
     </VideoContainer>
   );
 }

@@ -1,9 +1,7 @@
-.genre-page{
-  margin-top: 100px;
+.genre-page {
   flex: 1;
   flex-direction: column;
-  padding-left: 3%;
-  padding-top: 4%;
+  padding: 20px;
 }
 
 .genrevideo-list {
@@ -48,7 +46,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
   cursor: pointer;
-  margin-bottom:0px;
+  margin-bottom: 0px;
 }
 
 .genrevideo-item img {

@@ -4,7 +4,6 @@ import MovieComment from "../component/MovieComment";
 import styled from "styled-components";
 
 const MovieContainer = styled.div`
-  margin-top: 80px;
   display: flex;
   justify-content: center;
   background-color: #262626;

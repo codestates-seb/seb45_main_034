@@ -37,6 +37,7 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ userProfileImageLink 
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     Cookies.remove("userRoles");
+    Cookies.remove("userId")
     navigate("/");
     window.location.reload();
   };
