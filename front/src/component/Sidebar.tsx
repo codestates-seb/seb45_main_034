@@ -32,7 +32,7 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
   };
 
   const handleGenreClick = (genre: string) => {
-    getRecommendations(userId || "");
+    setSelectedCategory(genre);
     navigate(`/genres/${genre}`);
   };
 
@@ -59,7 +59,7 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
   // 사용자에게 영화 추천
   const getRecommendations = (userId: string) => {
     instance
-      .get(`/recommendations/user/${userId}`)
+      .get(`/api/movies/recommendations/user/${userId}`)
       .then((response) => {
         const data: MovieResponseDto[] = response.data;
         setRecommendedMoviesByGenre(data);
@@ -73,7 +73,7 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
   // 상위 평점 4점 이상 영화 추천
   const getTopRatedRecommendations = () => {
     instance
-      .get("/recommendations/top-rated")
+      .get("/api/movies/recommendations/top-rated")
       .then((response) => {
         const data: MovieResponseDto[] = response.data;
         setTopRatedMovies(data);
@@ -102,14 +102,12 @@ const SideBar: React.FC<SideBarProps> = ({ setSelectedCategory }) => {
         <FaHome className="home-icon" />
         <span className="home-text">홈</span>
       </button>
-      <button onClick={handleCategoriesClick}>
+      <button onClick={handleCategoriesClick} className="filter-text">
         <FaFilter className="filter-icon" />
-        <span className="filter-text">카테고리</span>
+        <span>카테고리</span>
       </button>
       <div className={`side-list ${showCategories ? "show" : ""}`}>
-        <button onClick={() => handleGenreClick("액션")}>액션</button>
         <button onClick={() => handleGenreClick("드라마")}>드라마</button>
-        <button onClick={() => handleGenreClick("스릴러")}>스릴러</button>
         <button onClick={() => handleGenreClick("로맨스")}>로맨스</button>
       </div>
       <button onClick={handleHistoryClick}>

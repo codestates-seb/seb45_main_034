@@ -6,18 +6,40 @@ import axios from "axios";
 import DeleteModal from "./deletemodal";
 
 const instance = axios.create({
-    baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
-  });
+  baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
+});
+
+instance.interceptors.request.use(async (config) => {
+  const accessToken = Cookies.get("accessToken");
+  const refreshToken = Cookies.get("refreshToken");
   
-  instance.interceptors.request.use((config) => {
-    const accessToken = Cookies.get("accessToken");
-    
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+
+  const accessTokenExpire = Cookies.get("accessTokenExpire");
+  if (accessTokenExpire && currentTimestamp >= parseInt(accessTokenExpire, 10)) {
+    try {
+      const refreshResponse = await axios.post("http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080/api/refresh", {
+        refreshToken: refreshToken,
+      });
+
+      if (refreshResponse.status === 200) {
+        const newAccessToken = refreshResponse.headers.authorization;
+        
+        Cookies.set("accessToken", newAccessToken, { path: "/" });
+
+        config.headers.Authorization = `Bearer ${newAccessToken}`;
+      }
+    } catch (error) {
+      console.error("토큰 재발급 실패:", error);
     }
-  
-    return config;
-  });
+  }
+
+  return config;
+});
 
 interface UserProfileMenuProps {
     userProfileImageLink: string | null;
@@ -38,6 +60,7 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ userProfileImageLink 
     Cookies.remove("refreshToken");
     Cookies.remove("userRoles");
     Cookies.remove("userId")
+    Cookies.remove("accessTokenExpire")
     navigate("/");
     window.location.reload();
   };

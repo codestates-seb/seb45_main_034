@@ -13,6 +13,10 @@ import Signup from './page/Signup';
 import CustomerForm from './page/MyACCount';
 import UserProfile from './page/MemberList';
 import SearchResults from './page/search';
+import UserRecommendations from './component/UserRecommendations';
+import Cookies from 'js-cookie';
+
+const userId = Cookies.get("userId") || "";
 
 function App() {
   return (
@@ -31,6 +35,10 @@ function App() {
            <Route path='/movie/add' element={<MovieAdd/>}/>
            <Route path='/mypage' element={<UserProfile/>}/>
            <Route path='/movie/search' element={<SearchResults />} />
+           <Route
+              path="/recommendations/user/:userId"
+              element={<UserRecommendations userId={userId} />}
+            />
          </Routes>
        </nav>
       </BrowserRouter>

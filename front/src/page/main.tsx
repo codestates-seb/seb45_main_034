@@ -5,7 +5,8 @@ import { useState } from "react";
 
 const Mainvideo = styled.div`
   display: flex;
-  margin-top: 40px;`
+  margin-top: 40px;
+  z-index: 1000;`
   ;
 
 const Home = () => {

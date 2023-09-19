@@ -19,8 +19,8 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "admin@gmail.com",
+    password: "1234asdf!@#",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -30,15 +30,13 @@ function Login() {
   useEffect(() => {
     let timer;
     if (showErrorMessage) {
-      // Show error message for 5 seconds
       timer = setTimeout(() => {
-        setErrorMessage(""); // Clear the error message
+        setErrorMessage("");
         setShowErrorMessage(false);
       }, 5000);
     }
 
     return () => {
-      // Clear the timer if the component unmounts or if the error message is hidden
       if (timer) {
         clearTimeout(timer);
       }
@@ -63,7 +61,16 @@ function Login() {
         const roles = response.data.roles;
         const userId = response.data.userId;
 
-        Cookies.set("accessToken", responseData.authorization, { path: "/" });
+        const accessToken = responseData.authorization;
+        const tokenParts = accessToken.split(".");
+        const payload = JSON.parse(atob(tokenParts[1]));
+
+        const expirationTimeInSeconds = payload.exp;
+
+        Cookies.set("accessToken", accessToken, { path: "/" });
+        Cookies.set("accessTokenExpire", expirationTimeInSeconds, {
+          path: "/",
+        });
         Cookies.set("refreshToken", responseData.refresh, { path: "/" });
         Cookies.set("userRoles", roles, { path: "/" });
         Cookies.set("userId", userId, { path: "/" });
