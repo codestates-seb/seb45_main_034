@@ -1,15 +1,23 @@
 import styled from "styled-components";
 import VideoList from "../component/Videolist";
+import SideBar from "../component/Sidebar";
+import { useState } from "react";
 
 const Mainvideo = styled.div`
-  margin-top: 80px;
-  display: flex;`;
+  display: flex;
+  margin-top: 40px;`
+  ;
 
 const Home = () => {
+  const [selectedCategory, setSelectedCategory] = useState("");
+
     return(
+      <div className='app-container'>
+        <SideBar setSelectedCategory={setSelectedCategory} />
     <Mainvideo>
      <VideoList/>
     </Mainvideo>
+    </div>
     )
 }
 export default Home

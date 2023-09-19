@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import '../component/CSS/signup.css';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const instance = axios.create({
   baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
 });
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,6 +26,8 @@ function Signup() {
       if (response.status === 200) {
         const responseData = response.data;
         console.log('Join successful:', responseData);
+
+        navigate('/')
 
         // Handle successful join, e.g., redirect to a success page
       } else {
@@ -47,7 +52,7 @@ function Signup() {
     <div className="Signup-header">
       <div className="Signup">
         <div className="Signup-container">
-          <h2 className="Signup-text">7Guys Flix 가입하기</h2>
+          <h2 className="Signup-text">MINIFLIX</h2>
           <form id="SignupForm" onSubmit={handleSubmit}>
             <div className="Signupinput-container">
               <label htmlFor="email" className="Signup-label">

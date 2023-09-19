@@ -3,20 +3,21 @@
 }
 
 .app-container{
-  background-color: #838383;
+  background-color: #1D1D1D;
+  margin-top: 40px;
 }
 
 .sidebar {
-  width: 17%;
+  width: 15%;
   height: 100vh;
-  background: linear-gradient(to bottom, #333 0%, white 95%);
+  background: #1D1D1D;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   padding: 20px;
   color: white;
-  margin-top: 80px;
+  margin-top: 40px;
 }
 
 .sidebar button {
@@ -42,6 +43,8 @@
   overflow-x: hidden;
   white-space: nowrap;
   font-size: 18px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .side-list.show {

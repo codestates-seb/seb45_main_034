@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import '../component/CSS/myaccount.css';
+import SideBar from "../component/Sidebar";
 
 interface CustomerData {
   nickName: string; // 이름을 닉네임으로 변경합니다.
@@ -27,6 +28,7 @@ function CustomerForm() {
   const [nickName, setNickName] = useState<string>("");
   const [proFilePicture, setProFilePicture] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   const userIds = Cookies.get("userId")
 
@@ -69,6 +71,8 @@ function CustomerForm() {
   };
 
   return (
+    <div className='app-container'>
+        <SideBar setSelectedCategory={setSelectedCategory} />
     <div className="my-account-container">
       <h2>내 계정 정보</h2>
       <form className="customer-form" onSubmit={handleSubmit}>
@@ -92,6 +96,7 @@ function CustomerForm() {
         </div>
         <button type="submit">정보 업데이트</button>
       </form>
+    </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./CSS/header.css";
+import "./CSS/login.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebookF,
@@ -19,12 +19,13 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "admin@gmail.com",
-    password: "1234asdf!@#",
+    email: "",
+    password: "",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -67,11 +68,6 @@ function Login() {
         Cookies.set("userRoles", roles, { path: "/" });
         Cookies.set("userId", userId, { path: "/" });
 
-        const accessToken = Cookies.get("accessToken");
-        const refreshToken = Cookies.get("refreshToken");
-        console.log("Access Token:", accessToken);
-        console.log("Refresh Token:", refreshToken);
-
         setErrorMessage("");
 
         navigate("/", { state: { roles } });
@@ -83,9 +79,14 @@ function Login() {
       }
     } catch (error) {
       console.error("Network error:", error);
-      setErrorMessage("Network error. Try again later!");
+      const errorMessage = error.response.data.message;
+      setErrorMessage(errorMessage);
       setShowErrorMessage(true);
     }
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
   };
 
   // Event handler for input changes
@@ -98,56 +99,52 @@ function Login() {
   };
 
   return (
-    <div className="main-content">
-      <div className="container">
-        <h1>Welcome to 7Guys Flix!</h1>
-        <p>Please log in to access the website:</p>
+    <div className="login-container">
+      <div className="login-header-container">
+        <h1 className="login-title">MINIFLIX</h1>
+      </div>
+      <div className="login-form-container">
         <form id="loginForm" onSubmit={handleSubmit}>
-          <div className="input-container">
-            <label htmlFor="email">email:</label>
+          <div className="login-input-container">
             <input
               type="text"
               id="email"
               name="email"
-              required
+              placeholder="이메일"
               autoComplete="username"
+              className="login-input"
               onChange={handleInputChange}
               value={formData.email}
             />
           </div>
-          <div className="input-container">
-            <label htmlFor="password">password:</label>
+          <div className="login-input-container">
             <input
               type="password"
               id="password"
               name="password"
-              required
+              placeholder="비밀번호"
               autoComplete="current-password"
+              className="login-input"
               onChange={handleInputChange}
               value={formData.password}
             />
           </div>
-          <div className="button-container">
-            <button type="submit">Login</button>
-          </div>
-          <div
-            id="error-container"
-            style={{ color: "red", fontWeight: "bold", textAlign: "center" }}
-          >
-            {errorMessage}
-          </div>
+          <button type="submit" className="login-button">
+            로그인
+          </button>
+          <div className="login-error-message">{errorMessage}</div>
         </form>
       </div>
-      <div className="social-buttons">
-        <button className="facebook-button" onClick={""}>
-          <FontAwesomeIcon icon={faFacebookF} /> Login with Facebook
+      <div className="login-social-buttons">
+        <button className="login-social-button">
+          <FontAwesomeIcon icon={faFacebookF} /> Facebook으로 로그인
         </button>
-        <button className="twitter-button" onClick={""}>
-          <FontAwesomeIcon icon={faTwitter} /> Login with Twitter
+        <button className="login-social-button">
+          <FontAwesomeIcon icon={faTwitter} /> Twitter로 로그인
         </button>
-        <button className="google-button" onClick={""}>
-          <FontAwesomeIcon icon={faGoogle} style={{ color: "#EA4335" }} /> Login
-          with Google
+        <button className="login-social-button">
+          <FontAwesomeIcon icon={faGoogle} style={{ color: "#EA4335" }} />{" "}
+          Google로 로그인
         </button>
       </div>
     </div>

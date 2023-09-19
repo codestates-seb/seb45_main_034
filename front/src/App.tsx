@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './page/main';
 import GenrePage from './page/GenreVideo';
-import SideBar from './component/Sidebar';
 import Historypage from './page/History';
 import Movie from './page/Movie';
 import Header from './component/header';
@@ -13,14 +12,12 @@ import MovieAdd from './page/Movieadd';
 import Signup from './page/Signup';
 import CustomerForm from './page/MyACCount';
 import UserProfile from './page/MemberList';
+import SearchResults from './page/search';
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState('');
   return (
       <BrowserRouter>
       <Header/>
-      <div className='app-container'>
-      <SideBar setSelectedCategory={setSelectedCategory} />
        <nav>
          <Routes>
            <Route path='/' element={<Home/>}/>
@@ -33,9 +30,9 @@ function App() {
            <Route path='/movie/edit/:movieId' element={<MovieEdit/>}/>
            <Route path='/movie/add' element={<MovieAdd/>}/>
            <Route path='/mypage' element={<UserProfile/>}/>
+           <Route path='/movie/search' element={<SearchResults />} />
          </Routes>
        </nav>
-      </div>
       </BrowserRouter>
   );
 }

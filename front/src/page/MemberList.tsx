@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import '../component/CSS/profile.css';
+import SideBar from "../component/Sidebar";
 
 const instance = axios.create({
   baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
@@ -21,6 +22,7 @@ function UserProfile() {
   const [email, setEmail] = useState<string>("");
   const [nickName, setNickName] = useState<string>("");
   const [proFilePicture, setProFilePicture] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const userId = Cookies.get("userId");
 
@@ -46,6 +48,8 @@ function UserProfile() {
   }, [userId]);
 
   return (
+    <div className='app-container'>
+        <SideBar setSelectedCategory={setSelectedCategory} />
     <div className="profile-container">
       <h2>프로필 정보</h2>
       <div className="profile-info">
@@ -62,6 +66,7 @@ function UserProfile() {
           <img src={proFilePicture} alt="프로필 사진" />
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -31,6 +31,7 @@ const VideoList: React.FC = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [videoDurations, setVideoDurations] = useState<{ [key: number]: string}>({});
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,7 +120,7 @@ const VideoList: React.FC = () => {
     <div className="video-list">
       {Object.keys(genreCounts).map((genre) => (
         <div key={genre}>
-          <h2>{genre}</h2>
+          <h2 className='video-font'>{genre}</h2>
           <div className="video-container">
             {movies.length === 0 ? (
               <div className="no-videos-message">아이고 비디오가 없네요...</div>
@@ -134,7 +135,7 @@ const VideoList: React.FC = () => {
 
                     return (
                       <div key={movie.movieId} className="video-item">
-                        <Link to={`/stream/${movie.movieId}`}>
+                        <Link to={`/stream/${movie.movieId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                           <img
                             src={movie.previewPicture}
                             alt={movie.title}

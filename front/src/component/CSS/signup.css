@@ -1,14 +1,14 @@
 
 .Signup-container {
-    background-color: white;
-    border: 1px solid #ccc;
+    background-color: #000000;
+    border: 1px solid #000000;
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     max-width: 400px;
     margin: 0 auto;
     text-align: center;
-    color: black;
+    color: rgb(255, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,7 +16,7 @@
   
   .Signup-label {
     margin-bottom: 5px;
-    color: black;
+    color: rgb(255, 255, 255);
     font-size: 15px;
     width: 100%;
     text-align: center;
@@ -27,11 +27,10 @@
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 3px;
-    color: black;
+    color: rgb(255, 255, 255);
     margin-bottom: 10px;
   }
     
-  /* Styles for the main signup button and social signup buttons */
   .Signup-button {
     width: auto;
     padding: 10px 20px;
@@ -93,7 +92,7 @@
   }
 
   .Signup-header {
-    background-color: #282c34;
+    background-color: #1D1D1D;
     min-height: 100vh;
     display: flex;
     flex-direction: column;

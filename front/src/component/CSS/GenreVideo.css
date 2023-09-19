@@ -1,5 +1,4 @@
 .genre-page{
-  margin-top: 100px;
   flex: 1;
   flex-direction: column;
   padding-left: 3%;
@@ -42,7 +41,7 @@
   position: relative;
   width: 200px;
   height: 250px;
-  background-color: #adadad;
+  background-color: transparent;
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -57,10 +56,11 @@
 }
 .genrevideo-title {
   font-size: 16px;
+  color: white;
 }
 .genrevideo-description {
   font-size: 14px;
-  color: #555;
+  color: #ffffff;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -74,4 +74,8 @@
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 4px;
+}
+
+.genre-font{
+  color: rgb(255, 255, 255);
 }

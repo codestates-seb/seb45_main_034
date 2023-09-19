@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import userimg from '../images/userimg.png'
 import UserProfileMenu from "./profilemenu";
 import { FaPlus } from 'react-icons/fa';
+import Logo from "../images/icon.png"
+import './CSS/header.css'
 
 const instance = axios.create({
   baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
@@ -27,6 +29,7 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
     const userRoles = Cookies.get("userRoles");
@@ -86,18 +89,37 @@ function Header() {
     navigate('/movie/add')
   }
 
+  const handleSearch = () => {
+    if (searchKeyword) {
+      navigate(`/movie/search?keyword=${searchKeyword}`);
+    }
+  };
+
   return (
     <div className="header">
-      <div className="header-title-logo">
-        <h1 className="header-title">Mini Flix</h1>
-        <div className="header-logo">
-          <img
-            src="https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/40q3/image/QQaey5FjoJcfXcL2zlP_v-ygSNI.jpg"
-            alt="Logo"
-          />
-        </div>
-      </div>
-      <div className="header-buttons">
+  <Link to={`/`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <h1 className="header-title">
+    <img className="header-logo" src={Logo} alt="Mini Flix Icon" />
+    MINIFLIX
+  </h1>
+  </Link>
+  <div className="header-search">
+    <div className="search-container">
+      <input
+        type="text"
+        placeholder="검색어를 입력하세요"
+        value={searchKeyword}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+        onKeyUp={(e) => {
+          if (e.key === 'Enter') {
+            handleSearch();
+          }
+        }}
+      />
+      <button className="search-button" onClick={handleSearch}>검색</button>
+    </div>
+  </div>
+  <div className="header-buttons">
         {isLogged ? (
           <>
             <div className="profile-image-container">

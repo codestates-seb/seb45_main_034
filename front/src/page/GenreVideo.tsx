@@ -3,10 +3,16 @@ import axios from 'axios';
 import { Movie } from '../type/VideoType';
 import '../component/CSS/popupmodal.css';
 import '../component/CSS/GenreVideo.css';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import PopupModal from '../component/Modal';
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { formatVideoDuration } from '../component/videoduration';
 import Cookies from "js-cookie";
+import SideBar from '../component/Sidebar';
+import styled from 'styled-components';
+
+const Mainvideo = styled.div`
+  display: flex;
+  margin-top: 40px;`
+  ;
 
 const instance = axios.create({
   baseURL: 'http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080',
@@ -39,6 +45,9 @@ const GenrePage: React.FC = () => {
   const location = useLocation();
   const [videoDurations, setVideoDurations] = useState<{ [key: number]: string }>({});
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userRoles = Cookies.get("userRoles");
@@ -119,8 +128,11 @@ const GenrePage: React.FC = () => {
   };
 
   return (
+    <div className='app-container'>
+        <SideBar setSelectedCategory={setSelectedCategory} />
+        <Mainvideo>
     <main className="genre-page">
-      <h2>{genre}</h2>
+      <h2 className='genre-font'>{genre}</h2>
       <div className="genrevideo-container">
         {movies.length === 0 ? (
           <NoVideosMessage />
@@ -133,29 +145,28 @@ const GenrePage: React.FC = () => {
   
               return (
                 <div key={movie.movieId} className="genrevideo-item">
-                  <Link to={`/stream/${movie.movieId}`}>
+                  <Link to={`/stream/${movie.movieId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img src={movie.previewPicture} alt={movie.title} onClick={() => handleMovieClick(movie)} />
                   <div className="video-title" onClick={() => handleMovieClick(movie)}>
                     {movie.title}
                   </div>
                   <p className="genrevideo-description">{movie.description}</p>
                   </Link>
-                  {isAdmin && <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />}
+                  {isAdmin && (
+                          <div
+                          className="menu-icon"
+                          onClick={() => navigate(`/movie/edit/${movie.movieId}`)}
+                        />
+                        )}
                   <div className="video-duration">{formatVideoDuration(parseFloat(duration))}</div>
                 </div>
               );
             })
         )}
       </div>
-      {selectedMovieID !== null && (
-        <PopupModal
-          title="영상 삭제"
-          message="정말로 이 영상을 삭제하시겠습니까?"
-          onDeleteClick={() => {}}
-          onCancelClick={() => setSelectedMovieID(null)}
-        />
-      )}
     </main>
+    </Mainvideo>
+    </div>
   );  
 };
 
