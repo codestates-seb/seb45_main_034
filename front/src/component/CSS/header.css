@@ -12,14 +12,14 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: 3;
   height: 10%;
   padding: 0%;
 }
 
 .header-title {
+  margin-left: 100px;
   font-size: 80px;
-  animation: slideAnimation 2.0s infinite alternate; 
   flex-grow: 2; /* Allow the title to grow and take available space */
 }
 
@@ -195,4 +195,51 @@
 .Twitter-button:hover,
 .google-button:hover {
   background-color: #1153A4; /* Darker shade on hover */
+}
+.logout-button{
+  font-size: 18px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #c98013;
+  color: white;
+  margin-right: 10px;
+}
+.profile-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  /* right: 50%; */
+}
+
+.profile-image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.add-movie-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  margin-right: 10px;
+}
+
+.add-movie-button:hover {
+  text-decoration: underline;
+}
+
+.header-buttons {
+  display: flex; /* 이 부분을 flex로 변경 */
+  align-items: center; /* 아이템들을 세로 가운데 정렬 */
 }

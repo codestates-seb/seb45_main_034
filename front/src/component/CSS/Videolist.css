@@ -5,6 +5,7 @@
   align-items: flex-start;
   margin: 20px;
   flex-wrap: wrap;
+  margin-top: 40px;
 }
 
 .category-list {
@@ -28,8 +29,9 @@
   display: flex;
   gap: 20px;
   flex-direction: row;
-  overflow: auto;
+  overflow-x: hidden;
   white-space: nowrap;
+  max-width: 100%;
 }
 
 .scrollable {
@@ -39,11 +41,38 @@
 
 .video-item {
   position: relative;
-  width: 20%;
-  background-color: #f0f0f0;
+  width: 200px;
+  height: 250px;
+  background-color: #adadad;
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
   cursor: pointer;
+  margin-bottom:0px;
+}
+
+.video-item img {
+  width: 200px;
+  height: 200px;
+}
+.video-title {
+  font-size: 16px;
+}
+.video-description {
+  font-size: 14px;
+  color: #555;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.video-duration {
+  position: absolute;
+  bottom: 22%;
+  right: 4%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
 }

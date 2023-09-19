@@ -1,5 +1,5 @@
 .genre-page{
-  margin-top: 80px;
+  margin-top: 100px;
   flex: 1;
   flex-direction: column;
   padding-left: 3%;
@@ -40,13 +40,38 @@
 
 .genrevideo-item {
   position: relative;
-  width: calc(30% - 20px);
-  height: calc(30% - 10px);
-  background-color: #f0f0f0;
+  width: 200px;
+  height: 250px;
+  background-color: #adadad;
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
   cursor: pointer;
-  margin-bottom: 5%;
+  margin-bottom:0px;
+}
+
+.genrevideo-item img {
+  width: 200px;
+  height: 200px;
+}
+.genrevideo-title {
+  font-size: 16px;
+}
+.genrevideo-description {
+  font-size: 14px;
+  color: #555;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.genrevideo-duration {
+  position: absolute;
+  bottom: 22%;
+  right: 4%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
 }

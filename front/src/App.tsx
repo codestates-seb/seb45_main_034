@@ -8,7 +8,11 @@ import Historypage from './page/History';
 import Movie from './page/Movie';
 import Header from './component/header';
 import Login from './component/Login';
-import MemberList from './page/MyACCount';
+import MovieEdit from './page/MovieEdit';
+import MovieAdd from './page/Movieadd';
+import Signup from './page/Signup';
+import CustomerForm from './page/MyACCount';
+import UserProfile from './page/MemberList';
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -21,10 +25,14 @@ function App() {
          <Routes>
            <Route path='/' element={<Home/>}/>
            <Route path='/login' element={<Login/>}/>
-           <Route path='/stream/:movieID' element={<Movie/>}/>
+           <Route path='/stream/:movieId' element={<Movie/>}/>
            <Route path='/genres/:genre' element={<GenrePage />}/>
            <Route path='/history' element={<Historypage/>}/>
-           <Route path='/mypage' element={<MemberList/>}/>
+           <Route path='/mypage/edit' element={<CustomerForm/>}/>
+           <Route path='/signup' element={<Signup/>}/>
+           <Route path='/movie/edit/:movieId' element={<MovieEdit/>}/>
+           <Route path='/movie/add' element={<MovieAdd/>}/>
+           <Route path='/mypage' element={<UserProfile/>}/>
          </Routes>
        </nav>
       </div>
