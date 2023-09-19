@@ -21,7 +21,6 @@ instance.interceptors.request.use((config) => {
 
   return config;
 });
-
 interface MoviesResponse {
   movies: Movie[];
 }

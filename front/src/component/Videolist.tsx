@@ -59,7 +59,6 @@ const VideoList: React.FC = () => {
   const handleScroll = (genre: string) => (event: React.UIEvent<HTMLDivElement>) => {
     const target = event.currentTarget;
     const scrollLeft = target.scrollLeft;
-  
     if (target.scrollWidth - scrollLeft === target.clientWidth) {
       setLoadedMovies((prevLoaded) => prevLoaded + 5);
     }
@@ -101,7 +100,6 @@ const VideoList: React.FC = () => {
       videoDurations[movie.movieId] = '00:00';
     }
   };
-
 
   useEffect(() => {
     const counts: GenreCounts = movies.reduce((acc, movie) => {

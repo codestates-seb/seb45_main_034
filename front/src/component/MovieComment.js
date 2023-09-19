@@ -63,7 +63,6 @@ const CommentList = styled.div`
   .comment-title {
     font-size: 1.2rem;
   }
-
   .list-space-between {
     display: flex;
     justify-content: space-between;
