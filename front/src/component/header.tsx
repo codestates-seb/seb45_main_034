@@ -23,7 +23,7 @@ instance.interceptors.request.use((config) => {
 function Header() {
   const navigate = useNavigate();
   const [isLogged, setIsLogged] = useState(false);
-  const [userProfileImageLink, setUserProfileImageLink] = useState(null);
+  const [userProfileImageLink, setUserProfileImageLink] = useState(userimg);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -61,7 +61,7 @@ function Header() {
       }
 
       const response = await instance.get(`/api/users/info/${userId}`);
-      const { userProfileImageLink } = response.data;
+      const userProfileImageLink = response.data.proFilePicture;
 
       setUserProfileImageLink(userProfileImageLink || userimg);
     } catch (error) {
@@ -89,7 +89,7 @@ function Header() {
   return (
     <div className="header">
       <div className="header-title-logo">
-        <h1 className="header-title">7Guys Flix</h1>
+        <h1 className="header-title">Mini Flix</h1>
         <div className="header-logo">
           <img
             src="https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/40q3/image/QQaey5FjoJcfXcL2zlP_v-ygSNI.jpg"

@@ -89,7 +89,7 @@ const MovieEdit: React.FC = () => {
   const handleDeleteClick = async () => {
     if (selectedMovieID !== null) {
       try {
-        await instance.delete(`/api/movies/${selectedMovieID}`);
+        await instance.delete(`/api/movies/${movie.movieId}`);
         console.log('영화 삭제 성공');
         setSelectedMovieID(null);
         setShowModal(false);

@@ -5,6 +5,7 @@ import axios from "axios";
 // import { ReactComponent as ShareIcon } from "../images/share.svg"; // 공유하기 버튼
 
 import { useParams } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const MovieDetailsContainer = styled.div`
   margin: 20px;
@@ -39,6 +40,16 @@ export default function MovieDetails() {
 
   const instance = axios.create({
     baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+  });
+
+  instance.interceptors.request.use((config) => {
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
   });
 
   useEffect(() => {
