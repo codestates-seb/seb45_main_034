@@ -1,7 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import StarRating from "../component/StarRating";
-import { ReactComponent as DeleteIcon } from "../images/baseline-delete-sweep.svg";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+import formatDate from "./formatDate";
+
+const instance = axios.create({
+  baseURL: "http://ec2-54-180-87-8.ap-northeast-2.compute.amazonaws.com:8080",
+});
+
+instance.interceptors.request.use((config) => {
+  const accessToken = Cookies.get("accessToken");
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
+});
 
 const CommentContainer = styled.div`
   margin: 20px;
@@ -39,10 +56,13 @@ const SubmitButton = styled.button`
 const CommentList = styled.div`
   margin-top: 20px;
   text-align: left;
-
   border-radius: 5px;
   padding: 0.5rem;
   background-color: #454545;
+
+  .comment-title {
+    font-size: 1.2rem;
+  }
 
   .list-space-between {
     display: flex;
@@ -82,12 +102,67 @@ const CommentBox = styled.div`
     color: #ffd400;
   }
 
-  .delete-button {
+  .box-space-between {
     display: flex;
-    background-color: #a60000;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .update-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
     color: white;
     border: none;
     padding: 4px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: #333333;
+    }
+  }
+  .cancel-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: #333333;
+    }
+  }
+  .edit-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: #333333;
+    }
+  }
+
+  .delete-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px;
     cursor: pointer;
     border-radius: 5px;
 
@@ -96,15 +171,10 @@ const CommentBox = styled.div`
     }
   }
 
-  .box-space-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .comment-date {
     color: #a0a0a0;
-    font-size: 0.8rem;
+    font-size: 1rem;
+    width: 10rem;
   }
 
   .comment {
@@ -113,68 +183,193 @@ const CommentBox = styled.div`
   }
 `;
 
-const MovieComment = () => {
-  const [comment, setComment] = useState("");
+export default function MovieComment() {
+  const [newCommentText, setNewCommentText] = useState("");
+  const [editedCommentText, setEditedCommentText] = useState("");
   const [rating, setRating] = useState(0.5);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState("");
   const [sortingOption, setSortingOption] = useState("newest");
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [commentIdToEdit, setcommentIdToEdit] = useState();
+  const [ratings, setRatings] = useState();
 
-  const handleCommentChange = (event) => {
-    setComment(event.target.value);
-  };
-
-  const handleRatingChange = (newRating) => {
-    setRating(newRating);
-  };
-
-  const handleSubmit = () => {
-    const newComment = { comment, user: "", rating, date: new Date() };
-    setComments([...comments, newComment]);
-
-    setComment("");
-    setRating(0.5);
-  };
+  const { movieId } = useParams();
+  const userId = Cookies.get("userId");
 
   const sortComments = (option) => {
     if (option === "newest") {
-      return [...comments].sort((a, b) => b.date - a.date);
+      return [...comments].sort((a, b) => b.createAt.localeCompare(a.createAt));
     } else if (option === "star-rating") {
       return [...comments].sort((a, b) => b.rating - a.rating);
     }
     return comments;
   };
 
-  const handleDeleteComment = (index) => {
-    const updatedComments = [...comments];
-    updatedComments.splice(index, 1); // Remove the comment at the specified index
-    setComments(updatedComments);
+  const handleCommentChange = (event) => {
+    setNewCommentText(event.target.value);
+  };
+
+  const handleRatingChange = (newRating) => {
+    setRating(newRating);
+  };
+
+  useEffect(() => {
+    if (movieId) {
+      instance
+        .get(`/api/movies/${movieId}`)
+        .then((response) => {
+          const data = response.data.commentList;
+          const rdata = response.data.ratingList;
+          setRatings(rdata);
+          setNewCommentText(data);
+          setComments(data);
+        })
+        .catch((error) => {
+          console.error("", error);
+        });
+    } else {
+      console.error("");
+    }
+  }, []);
+
+  // 댓글 등록
+  const handleSubmit = () => {
+    const newComment = {
+      nickName: userId,
+      text: newCommentText,
+      rating: rating,
+      createAt: new Date(),
+      modifyAt: new Date(),
+    };
+
+    // 댓글을 등록하는 요청
+    instance
+      .post(`/api/comment/${movieId}/add`, newComment)
+      .then((response) => {
+        console.log("댓글 등록 성공", response.data);
+        setNewCommentText("");
+        setRating(0.5);
+
+        const ratingData = {
+          nickName: userId,
+          movieId: movieId,
+          rating: rating,
+        };
+
+        instance
+          .post("/api/ratings", ratingData)
+          .then((response) => {
+            console.log("영화 평점 저장 성공", response.data);
+          })
+          .catch((error) => {
+            console.error("영화 평점 저장 오류", error);
+          });
+
+        instance
+          .get(`/api/movies/${movieId}`)
+          .then((response) => {
+            const data = response.data.commentList;
+            setComments(data);
+            setNewCommentText("");
+            setRating(0.5);
+          })
+          .catch((error) => {
+            console.error("", error);
+          });
+      })
+      .catch((error) => {
+        console.error("댓글 등록 오류:", error);
+      });
+  };
+
+  const handleEditComment = (index) => {
+    const commentToEdit = comments[index];
+    setEditedCommentText(commentToEdit.newCommentText);
+    setEditingIndex(index);
+    setcommentIdToEdit(commentToEdit.commentId);
+    handleUpdateComment(index, commentIdToEdit);
+  };
+
+  // 댓글 수정
+  const handleUpdateComment = (index, commentId) => {
+    const commentToEdit = comments[index];
+    const updatedComment = {
+      text: editedCommentText,
+    };
+
+    instance
+      .patch(
+        `/api/comment/${movieId}/update/${commentToEdit.commentId}`,
+        updatedComment
+      )
+      .then((response) => {
+        const updatedComments = [...comments];
+        updatedComments[index].text = editedCommentText;
+        updatedComments[index].isEdited = true;
+        setComments(updatedComments);
+        setEditingIndex(null);
+        setEditedCommentText("");
+      })
+      .catch((error) => {
+        console.error("댓글 수정 오류:", error);
+      });
+
+    // 자체 댓글 수정
+    // const updatedComments = [...comments];
+    // updatedComments[index].text = editedCommentText;
+    // updatedComments[index].createAt = new Date();
+    // updatedComments[index].isEdited = true;
+    // setComments(updatedComments);
+    // setEditingIndex(null);
+    // setEditedCommentText("");
+  };
+
+  const handleCancelEdit = () => {
+    setEditedCommentText("");
+    setEditingIndex(null);
+  };
+
+  // 댓글 삭제
+  const handleDeleteComment = async (index) => {
+    try {
+      const commentToEdit = comments[index];
+
+      await instance.delete(
+        `/api/comment/${movieId}/delete/${commentToEdit.commentId}`
+      );
+
+      const updatedComments = [...comments];
+      updatedComments.splice(index, 1);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error("댓글 삭제 오류:", error);
+    }
   };
 
   return (
     <CommentContainer>
-      <h3>댓글</h3>
       <StarRating onRatingChange={handleRatingChange} />
       <CommentInput
         placeholder="댓글을 작성해주세요."
-        value={comment}
+        // value={newCommentText} // 댓글을 등록한만큼의 {object}가 입력창에 뜸
         onChange={handleCommentChange}
       />
       <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
 
       <CommentList>
         <div className="list-space-between">
-          <h3>댓글 목록</h3>
-          <span className="row">
-            <h4
+          <span className="comment-title">댓글창</span>
+          <div className="row">
+            <div
               className={
                 sortingOption === "newest" ? "newest active" : "newest"
               }
               onClick={() => setSortingOption("newest")}
             >
-              최신순
-            </h4>
+              <span className="select">최신순</span>
+            </div>
             /
-            <h4
+            <div
               className={
                 sortingOption === "star-rating"
                   ? "star-rating active"
@@ -182,25 +377,61 @@ const MovieComment = () => {
               }
               onClick={() => setSortingOption("star-rating")}
             >
-              별점순
-            </h4>
-          </span>
+              <span className="select">별점순</span>
+            </div>
+          </div>
         </div>
         {sortComments(sortingOption).map((item, index) => (
           <CommentBox key={index}>
-            <div className="comment-user">댓글 작성자: {item.user}</div>
+            <div className="comment-user">{item.nickName}</div>
             <div className="comment-rating">
-              <span className="star-color">★</span> {item.rating * 1} / 5
+              <span className="star-color">★</span> {ratings.rating * 1} / 5
             </div>
-            <div className="comment">{item.comment}</div>
+            {editingIndex === index ? (
+              <CommentInput
+                placeholder="댓글을 작성해주세요."
+                value={editedCommentText}
+                onChange={(event) => setEditedCommentText(event.target.value)}
+                style={{ width: "16.4rem", height: "8rem" }}
+              />
+            ) : (
+              <div className="comment">{item.text}</div>
+            )}
             <div className="box-space-between">
-              <div className="comment-date">{item.date.toLocaleString()}</div>
+              <div className="comment-date">
+                {/* {formatDate(new Date(item.createAt))} */}
+                {/* 시간대가 댓글을 등록한 시점이 아님 */}
+                {item.createAt}
+                {item.isEdited && <span>(수정됨)</span>}
+              </div>
+              {editingIndex === index ? (
+                <>
+                  <span
+                    className="update-button"
+                    onClick={() => handleUpdateComment(index)}
+                  >
+                    저장
+                  </span>
+                  <span
+                    className="cancel-button"
+                    onClick={() => handleCancelEdit()}
+                  >
+                    취소
+                  </span>
+                </>
+              ) : (
+                <span
+                  className="edit-button"
+                  onClick={() => handleEditComment(index)}
+                >
+                  수정
+                </span>
+              )}
               <span
                 className="delete-button"
                 onClick={() => handleDeleteComment(index)}
-                title="삭제"
               >
-                <DeleteIcon />
+                삭제
               </span>
             </div>
           </CommentBox>
@@ -208,6 +439,4 @@ const MovieComment = () => {
       </CommentList>
     </CommentContainer>
   );
-};
-
-export default MovieComment;
+}

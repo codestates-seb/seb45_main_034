@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './CSS/Videolist.css';
 import { Movie } from '../type/VideoType';
-import { deleteMovie } from '../util/fetchVideo';
-import PopupModal from './Modal';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatVideoDuration } from './videoduration';
 import Cookies from "js-cookie";
 
@@ -30,9 +28,20 @@ const VideoList: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loadedMovies, setLoadedMovies] = useState<number>(5);
   const [genreCounts, setGenreCounts] = useState<GenreCounts>({});
-  const [selectedMovieID, setSelectedMovieID] = useState<number | null>(null);
+  const [isLogged, setIsLogged] = useState(false);
   const [videoDurations, setVideoDurations] = useState<{ [key: number]: string}>({});
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      setIsLogged(true);
+    } else {
+      setIsLogged(false);
+    }
+  }, []);
 
   useEffect(() => {
     const userRoles = Cookies.get("userRoles");
@@ -43,22 +52,6 @@ const VideoList: React.FC = () => {
       setIsAdmin(false);
     }
   }, []);
-
-  const handleMenuClick = (movieID: number) => {
-    setSelectedMovieID(movieID);
-  };
-
-  const handleDeleteClick = async () => {
-    if (selectedMovieID !== null) {
-      try {
-        await instance.delete(`/api/movies/${selectedMovieID}`);
-        console.log('영화 삭제 성공');
-        setSelectedMovieID(null);
-      } catch (error) {
-        console.error('영화 삭제 오류:', error);
-      }
-    }
-  };
 
   const handleMovieClick = (movie: Movie) => {
   };
@@ -121,18 +114,13 @@ const VideoList: React.FC = () => {
     }, {} as GenreCounts);
     setGenreCounts(counts);
   }, [movies]);
-  
-  
 
   return (
     <div className="video-list">
       {Object.keys(genreCounts).map((genre) => (
         <div key={genre}>
           <h2>{genre}</h2>
-          <div
-            className={`video-container ${genreCounts[genre] > 5 ? 'scrollable' : ''}`}
-            onScroll={handleScroll(genre)}
-          >
+          <div className="video-container">
             {movies.length === 0 ? (
               <div className="no-videos-message">아이고 비디오가 없네요...</div>
             ) : (
@@ -143,7 +131,7 @@ const VideoList: React.FC = () => {
                   .map((movie) => {
                     fetchVideoDuration(movie);
                     const duration = videoDurations[movie.movieId] || '00:00';
-  
+
                     return (
                       <div key={movie.movieId} className="video-item">
                         <Link to={`/stream/${movie.movieId}`}>
@@ -158,7 +146,10 @@ const VideoList: React.FC = () => {
                           <p className="video-description">{movie.description}</p>
                         </Link>
                         {isAdmin && (
-                          <div className="menu-icon" onClick={() => handleMenuClick(movie.movieId)} />
+                          <div
+                          className="menu-icon"
+                          onClick={() => navigate(`/movie/edit/${movie.movieId}`)}
+                        />
                         )}
                         <div className="video-duration">{duration || null}</div>
                       </div>
@@ -167,14 +158,6 @@ const VideoList: React.FC = () => {
               </div>
             )}
           </div>
-          {selectedMovieID !== null && (
-            <PopupModal
-              title="영상 삭제"
-              message="정말로 이 영상을 삭제하시겠습니까?"
-              onDeleteClick={() => handleDeleteClick()}
-              onCancelClick={() => setSelectedMovieID(null)}
-            />
-          )}
         </div>
       ))}
     </div>
