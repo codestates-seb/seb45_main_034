@@ -3,6 +3,7 @@ package com.seb_main_034.SERVER.auth.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seb_main_034.SERVER.auth.jwt.JwtTokenizer;
 import com.seb_main_034.SERVER.auth.dto.LoginDto;
+import com.seb_main_034.SERVER.auth.service.RefreTokenService;
 import com.seb_main_034.SERVER.users.entity.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -31,6 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager; // UserDetailsService에게 클라이언트가 보낸 토큰으로 검색요청(?) 보낼거라 예상
     private final JwtTokenizer jwtTokenizer;
+    private final RefreTokenService refreTokenService;
 
     private final String bea = "Bearer ";
 
@@ -62,9 +64,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = delegateAccessToken(user);
         String refreshToken = delegateRefreshToken(user);
 
+        LocalDateTime expirationTime = LocalDateTime.now().plus(30, ChronoUnit.MINUTES);
+
         //response 헤더에 엑세스 토큰을 담아 보냄. 이후 클라이언트가 request 헤더에 추가해서 자격증명에 사용
         response.setHeader("Authorization", bea + accessToken);
-        response.setHeader("Refresh", refreshToken); // 필수적이지 않음. 제외할 수 있음.
+        response.setHeader("Refresh", bea + refreshToken); // 필수적이지 않음. 제외할 수 있음.
+        response.setHeader("expirationTime", String.valueOf(expirationTime));
+        refreTokenService.saveToken(refreshToken);
 
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }
@@ -85,12 +91,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // 리프레쉬 토큰을 생성하는데 필요한 정보들을 세팅해 JwtTokenizer 클래스의 생성 메서드로 전달. 만들어진 토큰을 여기서 반환함
     private String delegateRefreshToken(Users user) {
+        Map<String, Object> claims = new ConcurrentHashMap<>();
+        claims.put("email", user.getEmail());
+        claims.put("roles", user.getRoles());
 
         String subject = user.getEmail();
         Date expiration = jwtTokenizer.getTokenLifeTime(jwtTokenizer.getRefreshTokenLifeTime());
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
-        String refreshToken = jwtTokenizer.createRefreshToken(subject, expiration, base64EncodedSecretKey);
+        String refreshToken = jwtTokenizer.createRefreshToken(claims, subject, expiration, base64EncodedSecretKey);
 
         return refreshToken;
     }

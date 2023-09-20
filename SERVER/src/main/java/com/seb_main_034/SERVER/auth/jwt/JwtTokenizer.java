@@ -25,11 +25,11 @@ public class JwtTokenizer {
 
     @Getter
     @Value("${jwt.access-token-life-time}")
-    private int accessTokenLifeTime = 1;  // accessToken 만료시간 정보
+    private int accessTokenLifeTime;  // accessToken 만료시간 정보
 
     @Getter
     @Value("${jwt.refresh-token-life-time}")
-    private int refreshTokenLifeTime = 420; // refreshToken 만료시간 정보
+    private int refreshTokenLifeTime; // refreshToken 만료시간 정보
 
     // 비밀키를 암호화해 생성
     public String encodeBase64SecretKey(String secretKey) {
@@ -51,12 +51,13 @@ public class JwtTokenizer {
                 .compact(); // JWT 생성 및 직렬화
     }
 
-    public String createRefreshToken(String subject, Date expiration, String base64SecretKey) {
+    public String createRefreshToken(Map<String, Object> claims, String subject, Date expiration, String base64SecretKey) {
         // Access 토큰 만료시, 재생성해주는 Refresh 토큰 생성 메서드
         // Access 토큰을 새로 발급해주는 역할이기에 사용자와 관련된 정보는 추가하지 않아도 됨
         Key key = getKeyFromBase64EncodedKey(base64SecretKey);
 
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(Calendar.getInstance().getTime())
                 .setExpiration(expiration)
