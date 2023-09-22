@@ -1,0 +1,70 @@
+.movieadd-containers {
+    padding: 200px;
+    border: 1px solid #1d1d1d;
+    border-radius: 5px;
+    background-color: #1d1d1d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .movieadd-container{
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .movieadd-h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .movieadd-label {
+    display: block;
+    margin-bottom: 10px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .movieadd-input{
+    background-color: rgba(151, 151, 151, 0.8);
+  }
+  
+  .movieadd-input,
+  .movieadd-textarea {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+    margin-top: 5px;
+    background-color: rgba(151, 151, 151, 0.8);
+  }
+  
+  .movieadd-textarea {
+    resize: vertical;
+    height: 120px;
+  }
+  
+  .movieadd-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .movieadd-button:hover {
+    background-color: #0056b3;
+  }
